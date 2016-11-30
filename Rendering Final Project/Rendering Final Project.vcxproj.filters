@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\src">
+      <UniqueIdentifier>{7fda9298-f7d6-4a40-ae93-b7d4e9a8d9e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\models">
+      <UniqueIdentifier>{ee7a73af-493e-49dd-973c-f18d1a047748}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\texture">
+      <UniqueIdentifier>{f319a075-624e-46c8-80cc-5f4ef733a9dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\textures">
+      <UniqueIdentifier>{4ca8d400-8037-4ec5-a2b7-86464fd0f54b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{f65b817e-93c4-49c9-b11e-8e6e5c74bec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders\floor">
+      <UniqueIdentifier>{fbf0dd6b-23ef-4fdf-a84b-74d48cbb608b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders\logs">
+      <UniqueIdentifier>{f2eb17e8-3cc3-4efb-9346-b41a4e053d12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\shaders\skybox">
+      <UniqueIdentifier>{e8331218-fbe7-46f2-9129-ff7b917d2e16}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\SceneShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="texture\lodepng.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="texture\texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\trimesh2\include\TriMesh.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="models\Logs.ply">
+      <Filter>Source Files\models</Filter>
+    </None>
+    <None Include="models\skybox.ply">
+      <Filter>Source Files\models</Filter>
+    </None>
+    <None Include="shaders\floor\floor.vert">
+      <Filter>Source Files\shaders\floor</Filter>
+    </None>
+    <None Include="shaders\floor\floor.frag">
+      <Filter>Source Files\shaders\floor</Filter>
+    </None>
+    <None Include="shaders\logs\logs.vert">
+      <Filter>Source Files\shaders\logs</Filter>
+    </None>
+    <None Include="shaders\logs\logs.frag">
+      <Filter>Source Files\shaders\logs</Filter>
+    </None>
+    <None Include="shaders\skybox\skybox.frag">
+      <Filter>Source Files\shaders\skybox</Filter>
+    </None>
+    <None Include="shaders\skybox\skybox.vert">
+      <Filter>Source Files\shaders\skybox</Filter>
+    </None>
+    <None Include="shaders\logs\logs.geom">
+      <Filter>Source Files\shaders\logs</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="texture\lodepng.cpp">
+      <Filter>Source Files\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="texture\texture.cpp">
+      <Filter>Source Files\texture</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Buffers.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SceneShader.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>Source Files\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\conn_comps.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\diffuse.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\edgeflip.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\faceflip.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\filter.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\GLCamera.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\ICP.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\KDtree.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\lmsmooth.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\overlap.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\remove.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\reorder_verts.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\shared.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\subdiv.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_bounding.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_connectivity.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_curvature.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_grid.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_io.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_normals.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_pointareas.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_stats.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_tstrips.cc">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\Black_and_White_grid.png">
+      <Filter>Source Files\textures</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

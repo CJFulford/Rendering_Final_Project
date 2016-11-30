@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B8E6BBB9-C269-4ECF-81B7-C7452C9BCB05}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>RenderingFinalProject</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Cody\Documents\Programming Libraries\trimesh2\include;C:\Users\Cody\Documents\Programming Libraries\glm-0.9.7.3\glm;C:\Users\Cody\Documents\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\include;C:\Users\Cody\Documents\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\include;J:\Programming Libraries\trimesh2-2.12\trimesh2\include;J:\Programming Libraries\glm-0.9.7.3\glm;J:\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\include;J:\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Cody\Documents\Programming Libraries\trimesh2\lib.Win32;C:\Users\Cody\Documents\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\lib-vc2015;C:\Users\Cody\Documents\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\lib\Release\Win32;J:\Programming Libraries\trimesh2-2.12\trimesh2\lib.Win32;J:\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\lib-vc2015;J:\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Users\Cody\Documents\Programming Libraries\trimesh2\include;C:\Users\Cody\Documents\Programming Libraries\glm-0.9.7.3\glm;C:\Users\Cody\Documents\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\include;C:\Users\Cody\Documents\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\include;J:\Programming Libraries\trimesh2-2.12\trimesh2\include;J:\Programming Libraries\glm-0.9.7.3\glm;J:\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\include;J:\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Cody\Documents\Programming Libraries\trimesh2\lib.Win32;C:\Users\Cody\Documents\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\lib-vc2015;C:\Users\Cody\Documents\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\lib\Release\Win32;J:\Programming Libraries\trimesh2-2.12\trimesh2\lib.Win32;J:\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\lib-vc2015;J:\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\Cody\Documents\Programming Libraries\trimesh2\include;C:\Users\Cody\Documents\Programming Libraries\glm-0.9.7.3\glm;C:\Users\Cody\Documents\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\include;C:\Users\Cody\Documents\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\include;J:\Programming Libraries\trimesh2-2.12\trimesh2\include;J:\Programming Libraries\glm-0.9.7.3\glm;J:\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\include;J:\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Cody\Documents\Programming Libraries\trimesh2\lib.Win32;C:\Users\Cody\Documents\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\lib-vc2015;C:\Users\Cody\Documents\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\lib\Release\Win32;J:\Programming Libraries\trimesh2-2.12\trimesh2\lib.Win32;J:\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\lib-vc2015;J:\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\Cody\Documents\Programming Libraries\trimesh2\include;C:\Users\Cody\Documents\Programming Libraries\glm-0.9.7.3\glm;C:\Users\Cody\Documents\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\include;C:\Users\Cody\Documents\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\include;J:\Programming Libraries\trimesh2-2.12\trimesh2\include;J:\Programming Libraries\glm-0.9.7.3\glm;J:\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\include;J:\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Cody\Documents\Programming Libraries\trimesh2\lib.Win32;C:\Users\Cody\Documents\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\lib-vc2015;C:\Users\Cody\Documents\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\lib\Release\Win32;J:\Programming Libraries\trimesh2-2.12\trimesh2\lib.Win32;J:\Programming Libraries\glfw-3.2.bin.WIN32\glfw-3.2.bin.WIN32\lib-vc2015;J:\Programming Libraries\glew-2.0.0-win32\glew-2.0.0\lib\Release\Win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;libtrimesh.a;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;libtrimesh.a;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;libtrimesh.a;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;glew32.lib;libtrimesh.a;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\trimesh2\include\TriMesh.h" />
+    <ClInclude Include="src\SceneShader.h" />
+    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="texture\lodepng.h" />
+    <ClInclude Include="texture\texture.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="models\Logs.ply" />
+    <None Include="models\skybox.ply" />
+    <None Include="shaders\floor\floor.frag" />
+    <None Include="shaders\floor\floor.vert" />
+    <None Include="shaders\logs\logs.frag" />
+    <None Include="shaders\logs\logs.geom" />
+    <None Include="shaders\logs\logs.vert" />
+    <None Include="shaders\skybox\skybox.frag" />
+    <None Include="shaders\skybox\skybox.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\trimesh2\libsrc\conn_comps.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\diffuse.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\edgeflip.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\faceflip.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\filter.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\GLCamera.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\ICP.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\KDtree.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\lmsmooth.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\overlap.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\remove.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\reorder_verts.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\shared.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\subdiv.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_bounding.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_connectivity.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_curvature.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_grid.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_io.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_normals.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_pointareas.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_stats.cc" />
+    <ClCompile Include="..\..\trimesh2\libsrc\TriMesh_tstrips.cc" />
+    <ClCompile Include="src\Buffers.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\SceneShader.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="texture\lodepng.cpp" />
+    <ClCompile Include="texture\texture.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="textures\Black_and_White_grid.png" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
