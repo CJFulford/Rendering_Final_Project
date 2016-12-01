@@ -28,6 +28,8 @@ protected:
 
     virtual GLuint compile_shaders( const char* vertexFilename, const char* geometryFilenameconst, const char* fragmentFilename );
 
+	void attachShader(GLuint & program, const char * fileName, GLuint shaderType);
+
     GLchar* loadshader (std::string filename);
 
     void unloadshader (GLchar** ShaderSource);
