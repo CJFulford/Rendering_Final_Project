@@ -1,7 +1,13 @@
 #version 430 core
 
+const float PI = 3.14159265559;
+const float PI2 = PI * 2.f;
+const float numOfLogs = 6.f;
+const float uvScale = 2.f;
+
 out vec4 color;
 
+uniform mat4 modelview;
 uniform sampler2D image;
 uniform mat4 projection;
 
@@ -14,9 +20,7 @@ in vec2 UV;
 
 float imageScale = 10.f;
 
-const float PI = 3.14159265559;
-const float PI2 = PI * 2.f;
-const float numOfLogs = 6.f;
+
 
 // rotation matix's
 mat3 rotateX(float a){return mat3(1.f, 0.f, 0.f, 0.f, cos(a), -sin(a), 0.f, sin(a), cos(a));}
@@ -36,5 +40,5 @@ void main (void)
 	}
 
 	color = col;
-	color.xyz /= numOfLogs;
+	color.xyz *= 0.15f;
 }

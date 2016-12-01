@@ -40,12 +40,9 @@ void main(void)
 			uv = UV[i];
 			uv.x += mod(rad / (PI / 10.f), 1.f);
 
-			position = position * rotateY(rad);
+			position *= rotateY(rad);
 
-			vec4 posCamSpace = modelview * vec4(position, 1.f);
-
-			gl_Position = projection * posCamSpace;
-
+			gl_Position = projection * modelview * vec4(position, 1.f);
 
 			EmitVertex();
 		}

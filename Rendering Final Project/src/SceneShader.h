@@ -20,6 +20,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cstdlib>
+#include <cstdio>
 
 const float PI = 3.14159265359f;
 const float PI2 = 2.f * PI;
@@ -74,6 +76,7 @@ private:
 	GLuint planeVertexArray;
 	GLuint planeVertexBuffer;
 	GLuint planeTextureBuffer;
+	GLuint planeLogsUVBuffer;
 
 	GLuint logsVertexArray;
 	GLuint logsVertexBuffer;

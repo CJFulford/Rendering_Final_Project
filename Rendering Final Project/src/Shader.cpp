@@ -58,12 +58,9 @@ void Shader::unloadshader(GLchar** ShaderSource)
 GLuint Shader::compile_shaders(const char* vertexFilename, const char* fragmentFilename)
 {
 	GLuint program = glCreateProgram();
-
 	attachShader(program, vertexFilename, GL_VERTEX_SHADER);
 	attachShader(program, fragmentFilename, GL_FRAGMENT_SHADER);
-
 	glLinkProgram(program);
-
 	return program;
 }
 
@@ -71,13 +68,10 @@ GLuint Shader::compile_shaders(const char* vertexFilename, const char* fragmentF
 GLuint Shader::compile_shaders(const char* vertexFilename, const char* geometryFilename, const char* fragmentFilename)
 {
 	GLuint program = glCreateProgram();
-
 	attachShader(program, vertexFilename, GL_VERTEX_SHADER);
 	attachShader(program, geometryFilename, GL_GEOMETRY_SHADER);
 	attachShader(program, fragmentFilename, GL_FRAGMENT_SHADER);
-
 	glLinkProgram(program);
-
 	return program;
 }
 
@@ -106,7 +100,6 @@ void Shader::attachShader(GLuint &program, const char* fileName, GLuint shaderTy
 		fprintf(stderr, "Compilation error in shader vertex_shader: %s\n", strInfoLog);
 		delete[] strInfoLog;
 	}
-
 
 	glAttachShader(program, shader);
 

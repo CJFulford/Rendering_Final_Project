@@ -1,9 +1,3 @@
-
-#include "GL/glew.h"
-#include <cstdlib>
-#include <cstdio>
-#include <GLFW/glfw3.h>
-
 #include "SceneShader.h"
 
 double mouse_old_x;
@@ -13,13 +7,13 @@ float rotate_x = 0.0;
 float rotate_y = 0.0;
 float translate_z = 1.0f;
 
-#define maxZoom 1.2f	// 2.5f is the radius of the skybox, but 2.5 buts us in the box
+#define maxZoom 1.2f
 #define minZoom 0.5f
 #define minRotate 0
 #define maxRotate 90
 
-int width = 1200;
-int height = 720;
+int width = 1000;
+int height = 1000;
 
 GLFWwindow* window;
 SceneShader shader;
@@ -30,9 +24,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 		glfwSetWindowShouldClose(window, GL_TRUE);
 	if (action == GLFW_PRESS)
 	{
-		int x = 0;
-		int y = 0;
-
 		switch (key)
 		{
 		case (27):
@@ -54,7 +45,6 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	}
 }
 
-
 void mouse(GLFWwindow* window, int button, int action, int mods)
 {
 	if (action == GLFW_PRESS)
@@ -68,11 +58,9 @@ void mouse(GLFWwindow* window, int button, int action, int mods)
 
 void motion(GLFWwindow* w, double x, double y)
 {
-
 	double dx, dy;
 	dx = (x - mouse_old_x);
 	dy = (y - mouse_old_y);
-
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
 	{
 		rotate_x += (float)(dy * 0.5f);
@@ -80,7 +68,6 @@ void motion(GLFWwindow* w, double x, double y)
 		if (rotate_x < minRotate) rotate_x = minRotate;
 		else if (rotate_x > maxRotate) rotate_x = maxRotate;
 	}
-
 	mouse_old_x = x;
 	mouse_old_y = y;
 }
@@ -119,10 +106,7 @@ void reshape(GLFWwindow* w, int widthX, int heightY)
 	glViewport(0, 0, width, height);
 }
 
-static void error_callback(int error, const char* description)
-{
-	fputs(description, stderr);
-}
+static void error_callback(int error, const char* description){fputs(description, stderr);}
 
 void startGlew()
 {
@@ -147,8 +131,6 @@ void startGlew()
 	printf("OpenGL version supported %s\n", version);
 	printf("GLSL version supported %s\n", glslVersion);
 	printf("GL version major, minor: %i.%i\n", major, minor);
-
-	shader.startup();
 }
 
 int main(int argc, char**argv)
@@ -172,11 +154,13 @@ int main(int argc, char**argv)
 	glfwSetWindowSizeCallback(window, reshape);
 
 	startGlew();
+	shader.startup();
 
+	float ratio;
+	int width, height;
+	
 	while (!glfwWindowShouldClose(window))
 	{
-		float ratio;
-		int width, height;
 		glfwGetFramebufferSize(window, &width, &height);
 		ratio = width / (float)height;
 		shader.setAspectRatio(ratio);
@@ -186,7 +170,6 @@ int main(int argc, char**argv)
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

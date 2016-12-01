@@ -53,8 +53,6 @@ std::vector<glm::vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::T
 	return uv;
 }
 
-
-
 void SceneShader::createLogsVertexBuffer()
 {
 	logsMesh = readMesh(logs, &logsTriangleIndices);

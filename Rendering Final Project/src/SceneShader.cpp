@@ -41,6 +41,9 @@ void SceneShader::renderFloor()
 	texture.bind2DTexture(programFloor, floorTexture, std::string("image"));
 	passBasicUniforms(&programFloor);
 
+	texture.bind2DTexture(programFloor, logsTexture, std::string("imagelog"));
+	glUniform1f(glGetUniformLocation(programLogs, "time"), time);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	texture.unbind2DTexture();
 	glBindVertexArray(0);
@@ -123,8 +126,8 @@ void SceneShader::shutdown()
 void SceneShader::startup()
 {
 	buildShaders();
-	createPlaneVertexBuffer();
 	createLogsVertexBuffer();
+	createPlaneVertexBuffer();
 	createSkyboxVertexBuffer();
 }
 
