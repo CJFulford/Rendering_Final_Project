@@ -108,7 +108,6 @@ void SceneShader::createSkyboxVertexBuffer()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(1);
 
-
 	std::vector<glm::vec2> uvs = calculateSphereicalUVCoordinates(skyboxMesh);
 
 	glGenBuffers(1, &skyboxCylUVBuffer);
@@ -124,16 +123,16 @@ void SceneShader::createSkyboxVertexBuffer()
 	glBindVertexArray(0);
 }
 
-void SceneShader::createPlaneVertexBuffer()
+void SceneShader::createFloorVertexBuffer()
 {
-	static const GLfloat planeGeometry[] =
+	static const GLfloat floorGeometry[] =
 	{
 		-1.0f, 0.0f, -1.0f,
 		-1.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, -1.0f,
 		1.0f, 0.0f, 1.0f,
 	};
-	static const GLfloat planeUVS[] =
+	static const GLfloat floorUVS[] =
 	{
 		0.f, 0.f,
 		0.f, 1.f,
@@ -143,19 +142,19 @@ void SceneShader::createPlaneVertexBuffer()
 
 	floorTexture = loadTexture(floorTextureFile);
 
-	glGenVertexArrays(1, &planeVertexArray);
-	glBindVertexArray(planeVertexArray);
+	glGenVertexArrays(1, &floorVertexArray);
+	glBindVertexArray(floorVertexArray);
 
-	glGenBuffers(1, &planeVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, planeVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(planeGeometry), planeGeometry, GL_STATIC_DRAW);
+	glGenBuffers(1, &floorVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, floorVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(floorGeometry), floorGeometry, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
 
 	//uvsPlane buffer
-	glGenBuffers(1, &planeTextureBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, planeTextureBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(planeUVS), planeUVS, GL_STATIC_DRAW);
+	glGenBuffers(1, &floorTextureBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, floorTextureBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(floorUVS), floorUVS, GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(1);
 

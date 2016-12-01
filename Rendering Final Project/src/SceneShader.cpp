@@ -1,6 +1,7 @@
 #include "SceneShader.h"
 
 float time = 0.f;
+glm::vec3 lightPosition = glm::vec3(0.2f, 0.2f, 0.f);
 
 void SceneShader::renderLogs()
 {
@@ -36,7 +37,7 @@ void SceneShader::renderSkybox()
 
 void SceneShader::renderFloor()
 {
-	glBindVertexArray(planeVertexArray);
+	glBindVertexArray(floorVertexArray);
 	glUseProgram(programFloor);
 	texture.bind2DTexture(programFloor, floorTexture, std::string("image"));
 	passBasicUniforms(&programFloor);
@@ -54,16 +55,13 @@ SceneShader::SceneShader() : Shader()
 	programFloor = 0;
 	programLogs = 0;
 	programSkybox = 0;
-	planeVertexArray = -1;
+	floorVertexArray = -1;
 	logsVertexArray = -1;
 	skyboxVertexArray = -1;
-	mvUniform = -1;
-	projUniform = -1;
 	zTranslation = 1.0;
 	aspectRatio = 1.0;
 	xRot = 0.0;
 	yRot = 0.0;
-	lightPosition = glm::vec3(0.2f, 0.2f, 0.f);
 }
 
 void SceneShader::render()
@@ -120,14 +118,14 @@ void SceneShader::shutdown()
 	glDeleteBuffers(1, &skyboxIndicesBuffer);
 	glDeleteVertexArrays(1, &skyboxVertexArray);
 	
-	glDeleteVertexArrays(1, &planeVertexArray);
+	glDeleteVertexArrays(1, &floorVertexArray);
 }
 
 void SceneShader::startup()
 {
 	buildShaders();
 	createLogsVertexBuffer();
-	createPlaneVertexBuffer();
+	createFloorVertexBuffer();
 	createSkyboxVertexBuffer();
 }
 

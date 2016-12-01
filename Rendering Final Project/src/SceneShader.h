@@ -1,20 +1,17 @@
-/*
- * SceneShader.h
- *
- *  Created on: Nov 17, 2015
- *      Author: acarocha
+/*  
+ *	Created on: Nov 17, 2015
+ *	Author: Cody Fulford
+ *	Code wwas originally written by acarocha, however it has been heavily modified
  */
 
 #ifndef SCENESHADER_H_
 #define SCENESHADER_H_
+#define GLM_FORCE_RADIANS
 
 #include "Shader.h"
 #include "..\texture\texture.h"
 #include "..\texture\lodepng.h"
 #include <vector>
-
-//#define GLM_FORCE_RADIANS
-
 #include <GLFW/glfw3.h>
 #include <TriMesh.h>
 #include <glm/glm.hpp>
@@ -35,9 +32,8 @@ public:
 	SceneShader();
 	~SceneShader();
 
-	void buildShaders();
-
 	void startup ();
+	void buildShaders();
 	void shutdown ();
 	void render();
 
@@ -52,14 +48,12 @@ public:
 
 
 private:
-
-	/*methods*/
-
-	trimesh::TriMesh* SceneShader::readMesh(std::string filename, std::vector<unsigned int> *triangleIndices);
+	// functions
+	trimesh::TriMesh* readMesh(std::string filename, std::vector<unsigned int> *triangleIndices);
 	std::vector<glm::vec2> calculateSphereicalUVCoordinates(trimesh::TriMesh * mesh);
-	std::vector<glm::vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh);
+	std::vector<glm::vec2> calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh);
 
-	void createPlaneVertexBuffer();
+	void createFloorVertexBuffer();
 	void createLogsVertexBuffer();
 	void createSkyboxVertexBuffer();
 
@@ -67,37 +61,31 @@ private:
 
 	GLuint loadTexture(std::string file_path);
 
-	/*variables*/
+	// variables
 	GLuint programLight;
 	GLuint programFloor;
 	GLuint programLogs;
 	GLuint programSkybox;
 
-	GLuint planeVertexArray;
-	GLuint planeVertexBuffer;
-	GLuint planeTextureBuffer;
-	GLuint planeLogsUVBuffer;
+	GLuint floorVertexArray;
+	GLuint floorVertexBuffer;
+	GLuint floorTextureBuffer;
+	GLuint floorTexture;
 
 	GLuint logsVertexArray;
 	GLuint logsVertexBuffer;
 	GLuint logsNormalBuffer;
-	GLuint logsIndicesBuffer;
-	GLuint logsInstanceBuffer;
-	GLuint logsTextureBuffer;
 	GLuint logsCylUVBuffer;
+	GLuint logsIndicesBuffer;
+	GLuint logsTexture;
 
 	GLuint skyboxVertexArray;
 	GLuint skyboxVertexBuffer;
 	GLuint skyboxNormalBuffer;
-	GLuint skyboxIndicesBuffer;
-	GLuint skyboxInstanceBuffer;
-	GLuint skyboxTextureBuffer;
 	GLuint skyboxCylUVBuffer;
+	GLuint skyboxIndicesBuffer;
+	GLuint skyboxTexture;
 
-	GLint mvUniform;
-	GLuint projUniform;
-
-	/* Matrices */
 	glm::mat4 modelview;
 	glm::mat4 projection;
 
@@ -106,19 +94,12 @@ private:
 	float yRot;
 	float aspectRatio;
 
-	// textures
-	GLuint logsTexture;
-	GLuint skyboxTexture;
-	GLuint floorTexture;
-
 	Texture texture;
 
 	trimesh::TriMesh* logsMesh;
 	std::vector<unsigned int> logsTriangleIndices;
 	trimesh::TriMesh* skyboxMesh;
 	std::vector<unsigned int> skyboxTriangleIndices;
-
-	glm::vec3 lightPosition;
 };
 
 #endif /* SCENESHADER_H_ */

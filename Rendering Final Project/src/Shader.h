@@ -14,7 +14,7 @@ public:
 
     virtual void shutdown () = 0;
 
-	virtual void createPlaneVertexBuffer() = 0;
+	virtual void createFloorVertexBuffer() = 0;
 	virtual void createLogsVertexBuffer() = 0;
 	virtual void createSkyboxVertexBuffer() = 0;
 
