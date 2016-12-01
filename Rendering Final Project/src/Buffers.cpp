@@ -3,7 +3,7 @@
 std::string defaultTextureFile =	"textures/Black_and_White_grid.png";
 std::string skyboxTextureFile =		"textures/skybox.png";
 std::string floorTextureFile =		"textures/dirt.png";
-std::string logsTextureFile =		"textures/coals.png";
+std::string logsTextureFile =		"textures/embers.png";
 std::string skybox =	"./models/skybox.ply";
 std::string logs =		"./models/Logs.ply";
 
@@ -61,35 +61,13 @@ std::vector<glm::vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::T
 	std::vector<glm::vec2> uv;
 	float V;
 	float U;
-	float max_y;
-	float min_y;
-	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
-	{
-		float y = mesh->vertices[i][1];
-		if (i == 0)
-		{
-			max_y = y;
-			min_y = y;
-		}
-		else
-		{
-			if (y > max_y) max_y = y;
-			if (y < min_y) min_y = y;
-		}
-	}
-	float range = max_y - min_y;
-	float prev_U;
-	bool toggle = false;
+
 	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
 	{
 		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
-		V = (vertex.y - min_y) / range;
-		U = (glm::atan(vertex.x, vertex.z) / PI2) + 0.5f;
+		V = vertex.y;
+		U = glm::atan(vertex.x, vertex.z) / PI2;
 
-
-		if (i == 0) prev_U = U;
-
-		if (U == 0.f && prev_U > 0.25f && prev_U < 0.5f) U = 0.25f;
 		uv.push_back(glm::vec2(U, V));
 	}
 	return uv;
