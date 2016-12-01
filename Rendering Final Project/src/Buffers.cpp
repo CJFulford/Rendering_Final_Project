@@ -5,7 +5,7 @@ std::string skyboxTextureFile =		"textures/skybox.png";
 std::string floorTextureFile =		"textures/dirt.png";
 std::string logsTextureFile =		"textures/embers.png";
 std::string skybox =	"./models/skybox.ply";
-std::string logs =		"./models/Logs2.ply";
+std::string logs =		"./models/Logs.ply";
 
 
 trimesh::TriMesh* SceneShader::readMesh(std::string filename, std::vector<unsigned int>* triangleIndices)
