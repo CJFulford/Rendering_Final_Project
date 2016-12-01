@@ -175,7 +175,53 @@ void SceneShader::createFireVertexBuffer()
 	glm::vec2 uv;
 	uv.x = sqrt((tex_x * tex_x) + (tex_y * tex_y));
 	uv.y = tex_z;
+
+	unsigned int n = 2; // number of control points
+	unsigned int degree = 40; // unknown
+	unsigned int i = 0; // B-spline that we are looking at
+
+
+	float t[10];	//Knot vlaue
+	float p[10];	//control point
+	float N[10][10];	// B-spline basis Function
+	float P[10];	// current control point
+
+	float C;
+	for (i = 0; i < n; i++)
+	{
+		C += N[i][degree] * P[i];
+	}
+
+	// there is a velocity function in the paper to sim movement
+	// solving for P from P' in GPu is difficult and error prone, solving for P' from P in CPU is easy adn reliable
 }
+
+float bsplineBasis(float t, int  i, int n, float t_i[], float* N[])
+{
+	int p = 0;	//B-spline iterator
+
+
+
+	int degree = 0; // unknown, possibly degree of curve
+
+	if (i < degree) t_i[i] = 0.f;
+	else if (degree < i && i < n) { t_i[i] = (i - degree) / (n - degree); }
+	else t_i[i] = 1.f;
+
+	// I am representing t as t[0] here as i do not know what t is.
+	if (p == 0)
+	{
+		if (t_i[i] <= t < t_i[i + 1]) N[i][0] = 1.f;
+		else N[i][0] = 0.f;
+	}
+	else
+	{
+		float a = ((t - t_i[i]) / (t_i[i + p] - t_i[i])) * N[i][p - 1];
+		float b = ((t_i[i + p + 1] - t_i[0]) / (t_i[i + p + 1] - t_i[i + 1])) * N[i + 1][p - 1];
+		N[i][p] = a + b;
+	}
+}
+
 
 GLuint SceneShader::loadTexture(std::string file_path)
 {
