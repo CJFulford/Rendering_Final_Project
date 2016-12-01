@@ -7,30 +7,6 @@ std::string logsTextureFile =		"textures/embers.png";
 std::string skybox =	"./models/skybox.ply";
 std::string logs =		"./models/Logs.ply";
 
-
-trimesh::TriMesh* SceneShader::readMesh(std::string filename, std::vector<unsigned int>* triangleIndices)
-{
-	trimesh::TriMesh* mesh;
-
-	mesh = trimesh::TriMesh::read(filename);
-
-	mesh->need_bbox();
-	mesh->need_faces();
-	mesh->need_normals();
-	mesh->need_bsphere();
-
-	triangleIndices->clear();
-
-	for (unsigned int i = 0; i < mesh->faces.size(); i++)
-	{
-		triangleIndices->push_back(mesh->faces[i][0]);
-		triangleIndices->push_back(mesh->faces[i][1]);
-		triangleIndices->push_back(mesh->faces[i][2]);
-	}
-
-	return mesh;
-}
-
 std::vector<glm::vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::TriMesh* mesh)
 { 
 	std::vector<glm::vec2> uv;
@@ -85,56 +61,7 @@ std::vector<glm::vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::T
 	return uv;
 }
 
-GLuint SceneShader::loadTexture(std::string file_path)
-{
-	std::vector<unsigned char> image;
-	unsigned int imageWidth;
-	unsigned int imageHeight;
 
-	std::string imageFilename(file_path);
-	unsigned int error = lodepng::decode(image, imageWidth, imageHeight, imageFilename.c_str());
-	if (error) std::cout << "reading error" << error << ":" << lodepng_error_text(error) << std::endl;
-
-	return  texture.create2DTexture(image, imageWidth, imageHeight);
-}
-
-void SceneShader::createPlaneVertexBuffer()
-{
-	static const GLfloat planeGeometry[] =
-	{
-		-1.0f, 0.0f, -1.0f,
-		-1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, -1.0f,
-		1.0f, 0.0f, 1.0f,
-	};
-	static const GLfloat planeUVS[] =
-	{
-		0.f, 0.f,
-		0.f, 1.f,
-		1.f, 0.f,
-		1.f, 1.f,
-	};
-
-	floorTexture = loadTexture(floorTextureFile);
-
-	glGenVertexArrays(1, &planeVertexArray);
-	glBindVertexArray(planeVertexArray);
-
-	glGenBuffers(1, &planeVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, planeVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(planeGeometry), planeGeometry, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(0);
-
-	//uvsPlane buffer
-	glGenBuffers(1, &planeTextureBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, planeTextureBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(planeUVS), planeUVS, GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(1);
-
-	glBindVertexArray(0);
-}
 
 void SceneShader::createLogsVertexBuffer()
 {
@@ -205,4 +132,78 @@ void SceneShader::createSkyboxVertexBuffer()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, skyboxTriangleIndices.size() * sizeof(unsigned int), skyboxTriangleIndices.data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
+}
+
+void SceneShader::createPlaneVertexBuffer()
+{
+	static const GLfloat planeGeometry[] =
+	{
+		-1.0f, 0.0f, -1.0f,
+		-1.0f, 0.0f, 1.0f,
+		1.0f, 0.0f, -1.0f,
+		1.0f, 0.0f, 1.0f,
+	};
+	static const GLfloat planeUVS[] =
+	{
+		0.f, 0.f,
+		0.f, 1.f,
+		1.f, 0.f,
+		1.f, 1.f,
+	};
+
+	floorTexture = loadTexture(floorTextureFile);
+
+	glGenVertexArrays(1, &planeVertexArray);
+	glBindVertexArray(planeVertexArray);
+
+	glGenBuffers(1, &planeVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, planeVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeGeometry), planeGeometry, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
+	//uvsPlane buffer
+	glGenBuffers(1, &planeTextureBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, planeTextureBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(planeUVS), planeUVS, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(1);
+
+	glBindVertexArray(0);
+}
+
+GLuint SceneShader::loadTexture(std::string file_path)
+{
+	std::vector<unsigned char> image;
+	unsigned int imageWidth;
+	unsigned int imageHeight;
+
+	std::string imageFilename(file_path);
+	unsigned int error = lodepng::decode(image, imageWidth, imageHeight, imageFilename.c_str());
+	if (error) std::cout << "reading error" << error << ":" << lodepng_error_text(error) << std::endl;
+
+	return  texture.create2DTexture(image, imageWidth, imageHeight);
+}
+
+trimesh::TriMesh* SceneShader::readMesh(std::string filename, std::vector<unsigned int>* triangleIndices)
+{
+	trimesh::TriMesh* mesh;
+
+	mesh = trimesh::TriMesh::read(filename);
+
+	mesh->need_bbox();
+	mesh->need_faces();
+	mesh->need_normals();
+	mesh->need_bsphere();
+
+	triangleIndices->clear();
+
+	for (unsigned int i = 0; i < mesh->faces.size(); i++)
+	{
+		triangleIndices->push_back(mesh->faces[i][0]);
+		triangleIndices->push_back(mesh->faces[i][1]);
+		triangleIndices->push_back(mesh->faces[i][2]);
+	}
+
+	return mesh;
 }
