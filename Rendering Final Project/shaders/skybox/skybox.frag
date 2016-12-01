@@ -12,5 +12,5 @@ in vec2 UV;
 void main(void)
 {	
 	color = texture(image, UV);
-	color.xyz *= 0.1f;
+	//color.xyz *= 0.1f;
 }
