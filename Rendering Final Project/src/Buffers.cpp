@@ -7,26 +7,11 @@ std::string logsTextureFile =		"textures/embers.png";
 std::string skybox =	"./models/skybox.ply";
 std::string logs =		"./models/Logs.ply";
 
+float degToRad(float deg){return deg * PI / 180.f;}
+
 std::vector<glm::vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::TriMesh* mesh)
 { 
 	std::vector<glm::vec2> uv;
-	float V;
-	float U;
-	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
-	{
-		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
-
-		float phi = glm::atan(vertex.y, glm::max(vertex.x, vertex.z));
-		float theta = glm::atan(vertex.x, vertex.z);
-
-		V = (PIo2 - phi) / (PI / 4.f);
-		U = theta / PIo2;
-
-		uv.push_back(glm::vec2(U, V));
-	}
-	return uv;
-	/*
-		std::vector<glm::vec2> uv;
 	float V;
 	float U;
 	float max_y;
@@ -40,24 +25,31 @@ std::vector<glm::vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::Tr
 	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
 	{
 		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
+
 		V = (PIo2 - (vertex.y / max_y)) / (PI / 4.f);
 		U = (glm::atan(vertex.x, vertex.z) / PI2) + 0.5f;
+
 		if (U < 0.25f) toggle = true;
 		if (toggle && (U - 0.7f) > 0.f) U = 0.f;
+
 		uv.push_back(glm::vec2(U, V));
 	}
-	return uv;*/
+	return uv;
 }
 
 std::vector<glm::vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh)
 {
 	std::vector<glm::vec2> uv;
+	float U, V;
 	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
 	{
 		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
-		uv.push_back(glm::vec2(glm::atan(vertex.x, vertex.z) / PI2, 
-								vertex.y));
+		U = glm::atan(vertex.x, vertex.z) / PI2;
+		V = vertex.y;
+
+		uv.push_back(glm::vec2(U, V));
 	}
+
 	return uv;
 }
 

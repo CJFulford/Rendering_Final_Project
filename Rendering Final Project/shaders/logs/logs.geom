@@ -38,7 +38,7 @@ void main(void)
 			l = L[i];
 
 			uv = UV[i];
-			uv.x += mod(rad / PI2, 1.f);
+			uv.x += mod(rad / (PI / 10.f), 1.f);
 
 			position = position * rotateY(rad);
 
