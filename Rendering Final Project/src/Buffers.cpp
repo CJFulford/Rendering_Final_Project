@@ -7,6 +7,8 @@ std::string logsTextureFile =		"textures/embers.png";
 std::string skybox =	"./models/skybox.ply";
 std::string logs =		"./models/Logs.ply";
 
+std::string fireTextureFile = "textures/fire_profile_texture.png";
+
 float degToRad(float deg){return deg * PI / 180.f;}
 
 std::vector<glm::vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::TriMesh* mesh)
@@ -159,6 +161,20 @@ void SceneShader::createFloorVertexBuffer()
 	glEnableVertexAttribArray(1);
 
 	glBindVertexArray(0);
+}
+
+void SceneShader::createFireVertexBuffer()
+{
+	fireTexture = loadTexture(floorTextureFile);
+	// these are the coordinates for a point in the flame. x,y [-1, 1]. z [0,1]
+	float tex_x;
+	float tex_y;
+	float tex_z;
+
+	// calc uv and access texture like any other
+	glm::vec2 uv;
+	uv.x = sqrt((tex_x * tex_x) + (tex_y * tex_y));
+	uv.y = tex_z;
 }
 
 GLuint SceneShader::loadTexture(std::string file_path)

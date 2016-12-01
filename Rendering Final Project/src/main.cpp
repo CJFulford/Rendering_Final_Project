@@ -159,6 +159,7 @@ int main(int argc, char**argv)
 	float ratio;
 	int width, height;
 	
+
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwGetFramebufferSize(window, &width, &height);

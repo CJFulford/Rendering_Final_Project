@@ -54,6 +54,7 @@ private:
 	std::vector<glm::vec2> calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh);
 
 	void createFloorVertexBuffer();
+	void createFireVertexBuffer();
 	void createLogsVertexBuffer();
 	void createSkyboxVertexBuffer();
 
@@ -66,6 +67,7 @@ private:
 	GLuint programFloor;
 	GLuint programLogs;
 	GLuint programSkybox;
+	GLuint programFire;
 
 	GLuint floorVertexArray;
 	GLuint floorVertexBuffer;
@@ -85,6 +87,8 @@ private:
 	GLuint skyboxCylUVBuffer;
 	GLuint skyboxIndicesBuffer;
 	GLuint skyboxTexture;
+
+	GLuint fireTexture;
 
 	glm::mat4 modelview;
 	glm::mat4 projection;
