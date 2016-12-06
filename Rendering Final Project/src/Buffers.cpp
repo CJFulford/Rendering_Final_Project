@@ -1,9 +1,9 @@
 #include "SceneShader.h"
 
-std::string defaultTextureFile =	"textures/Black_and_White_grid.png";
 std::string skyboxTextureFile =		"textures/skybox.png";
 std::string floorTextureFile =		"textures/dirt.png";
 std::string logsTextureFile =		"textures/embers.png";
+std::string fireTextureFile =		"textures/fire_profile_texture.png";
 std::string skybox =	"./models/skybox.ply";
 std::string logs =		"./models/Logs.ply";
 
@@ -11,48 +11,78 @@ std::string fireTextureFile = "textures/fire_profile_texture.png";
 
 float degToRad(float deg){return deg * PI / 180.f;}
 
-std::vector<glm::vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::TriMesh* mesh)
-{ 
-	std::vector<glm::vec2> uv;
-	float V;
-	float U;
-	float max_y;
-	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
+void SceneShader::createFireVertexBuffer()
+{
+	fireTexture = loadTexture(fireTextureFile);
+
+
+	//This can also count for base and direction for creation of control points below
+	glm::vec3 fireBase = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 fireTop = glm::vec3(0.f, 0.f, 1.f);
+
+	const unsigned int totalControlPoints = 4;
+
+	glm::vec3 controlPoints[totalControlPoints + 1]; // +1 becasue we also need the top point
+
+	for (unsigned int i = 0; i <= totalControlPoints; i++) // <=  so we get tot the top point
 	{
-		float y = mesh->vertices[i][1];
-		if (i == 0) max_y = y;
-		else if (y > max_y) max_y = y;
+		// form a list of control points in a line from the base to the top.
+		// no variation in the line yet
+		controlPoints[i] = fireBase + (((float)i / (float)totalControlPoints) * fireTop);
 	}
-	bool toggle = false;
-	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
+
+
+
+	// these are the coordinates for a point in the flame. x,y [-1, 1]. z [0,1]
+	// do the texture work in the shader
+	/*
+	float tex_x;
+	float tex_y;
+	float tex_z;
+
+	// calc uv and access texture like any other
+	glm::vec2 uv;
+	uv.x = sqrt((tex_x * tex_x) + (tex_y * tex_y));
+	uv.y = tex_z;*/
+
+	unsigned int degree = 3; // bezier curve degree
+
+
+	float knot[10];	//Knot vlaue
+	float p[10];	//control point
+	float N[10][10];	// B-spline basis Function
+
+	float C;
+	for (unsigned int i = 0; i < totalControlPoints; i++)
 	{
-		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
-
-		V = (PIo2 - (vertex.y / max_y)) / (PI / 4.f);
-		U = (glm::atan(vertex.x, vertex.z) / PI2) + 0.5f;
-
-		if (U < 0.25f) toggle = true;
-		if (toggle && (U - 0.7f) > 0.f) U = 0.f;
-
-		uv.push_back(glm::vec2(U, V));
+		C += N[i][degree] * 5;//controlPoints[i];
 	}
-	return uv;
+
+	// there is a velocity function in the paper to sim movement
+	// solving for P from P' in GPU is difficult and error prone, solving for P' from P in CPU is easy and reliable
 }
 
-std::vector<glm::vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh)
+float bsplineBasis(float knot, unsigned int  iterator, unsigned int totalControlPoints, float t_i[], float* N[], unsigned int degree)
 {
-	std::vector<glm::vec2> uv;
-	float U, V;
-	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
+	int p = 0;	//B-spline iterator
+
+	if (i < degree) t_i[i] = 0.f;
+	else if (degree < i && i < n) { t_i[i] = (i - degree) / (n - degree); }
+	else t_i[i] = 1.f;
+
+	// I am representing t as t[0] here as i do not know what t is.
+	if (p == 0)
 	{
-		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
-		U = glm::atan(vertex.x, vertex.z) / PI2;
-		V = vertex.y;
-
-		uv.push_back(glm::vec2(U, V));
+		if (t_i[i] <= t < t_i[i + 1]) N[i][0] = 1.f;
+		else N[i][0] = 0.f;
 	}
-
-	return uv;
+	else
+	{
+		float a = ((t - t_i[i]) / (t_i[i + p] - t_i[i])) * N[i][p - 1];
+		float b = ((t_i[i + p + 1] - t_i[0]) / (t_i[i + p + 1] - t_i[i + 1])) * N[i + 1][p - 1];
+		N[i][p] = a + b;
+	}
+	return 0;
 }
 
 void SceneShader::createLogsVertexBuffer()
@@ -163,66 +193,6 @@ void SceneShader::createFloorVertexBuffer()
 	glBindVertexArray(0);
 }
 
-void SceneShader::createFireVertexBuffer()
-{
-	fireTexture = loadTexture(floorTextureFile);
-	// these are the coordinates for a point in the flame. x,y [-1, 1]. z [0,1]
-	float tex_x;
-	float tex_y;
-	float tex_z;
-
-	// calc uv and access texture like any other
-	glm::vec2 uv;
-	uv.x = sqrt((tex_x * tex_x) + (tex_y * tex_y));
-	uv.y = tex_z;
-
-	unsigned int n = 2; // number of control points
-	unsigned int degree = 40; // unknown
-	unsigned int i = 0; // B-spline that we are looking at
-
-
-	float t[10];	//Knot vlaue
-	float p[10];	//control point
-	float N[10][10];	// B-spline basis Function
-	float P[10];	// current control point
-
-	float C;
-	for (i = 0; i < n; i++)
-	{
-		C += N[i][degree] * P[i];
-	}
-
-	// there is a velocity function in the paper to sim movement
-	// solving for P from P' in GPu is difficult and error prone, solving for P' from P in CPU is easy adn reliable
-}
-
-float bsplineBasis(float t, int  i, int n, float t_i[], float* N[])
-{
-	int p = 0;	//B-spline iterator
-
-
-
-	int degree = 0; // unknown, possibly degree of curve
-
-	if (i < degree) t_i[i] = 0.f;
-	else if (degree < i && i < n) { t_i[i] = (i - degree) / (n - degree); }
-	else t_i[i] = 1.f;
-
-	// I am representing t as t[0] here as i do not know what t is.
-	if (p == 0)
-	{
-		if (t_i[i] <= t < t_i[i + 1]) N[i][0] = 1.f;
-		else N[i][0] = 0.f;
-	}
-	else
-	{
-		float a = ((t - t_i[i]) / (t_i[i + p] - t_i[i])) * N[i][p - 1];
-		float b = ((t_i[i + p + 1] - t_i[0]) / (t_i[i + p + 1] - t_i[i + 1])) * N[i + 1][p - 1];
-		N[i][p] = a + b;
-	}
-}
-
-
 GLuint SceneShader::loadTexture(std::string file_path)
 {
 	std::vector<unsigned char> image;
@@ -257,4 +227,48 @@ trimesh::TriMesh* SceneShader::readMesh(std::string filename, std::vector<unsign
 	}
 
 	return mesh;
+}
+
+std::vector<glm::vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::TriMesh* mesh)
+{
+	std::vector<glm::vec2> uv;
+	float V;
+	float U;
+	float max_y;
+	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
+	{
+		float y = mesh->vertices[i][1];
+		if (i == 0) max_y = y;
+		else if (y > max_y) max_y = y;
+	}
+	bool toggle = false;
+	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
+	{
+		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
+
+		V = (PIo2 - (vertex.y / max_y)) / (PI / 4.f);
+		U = (glm::atan(vertex.x, vertex.z) / PI2) + 0.5f;
+
+		if (U < 0.25f) toggle = true;
+		if (toggle && (U - 0.7f) > 0.f) U = 0.f;
+
+		uv.push_back(glm::vec2(U, V));
+	}
+	return uv;
+}
+
+std::vector<glm::vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh)
+{
+	std::vector<glm::vec2> uv;
+	float U, V;
+	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
+	{
+		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
+		U = glm::atan(vertex.x, vertex.z) / PI2;
+		V = vertex.y;
+
+		uv.push_back(glm::vec2(U, V));
+	}
+
+	return uv;
 }
