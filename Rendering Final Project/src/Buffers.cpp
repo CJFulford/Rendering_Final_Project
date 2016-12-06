@@ -1,4 +1,5 @@
 #include "SceneShader.h"
+#include <omp.h>
 
 std::string skyboxTextureFile =		"textures/skybox.png";
 std::string floorTextureFile =		"textures/dirt.png";
@@ -7,9 +8,7 @@ std::string fireTextureFile =		"textures/fire_profile_texture.png";
 std::string skybox =	"./models/skybox.ply";
 std::string logs =		"./models/Logs.ply";
 
-void printVec3(vec3 v){std::cout << v.x << "\t" << v.y << "\t" << v.z << "\t" << std::endl;}
-
-float spline(float knot, float knots[], float numOfKnots, int i, int p)
+float spline(float knot, float knots[], int numOfKnots, int i, int p)
 {
 	float	t = knot,
 			ti = knots[i],
@@ -48,10 +47,8 @@ float spline(float knot, float knots[], float numOfKnots, int i, int p)
 
 void SceneShader::createFireVertexBuffer()
 {
-	fireTexture = loadTexture(fireTextureFile);
-
 	vec3	fireBase = vec3(0.f, 0.f, 0.f),
-			fireTop	 = vec3(0.f, 0.f, 1.f);
+			fireTop	 = vec3(0.f, 1.f, 0.f);
 
 
 	const int	totalControlPoints	= 10,					// desired nmumber of control points
@@ -63,7 +60,9 @@ void SceneShader::createFireVertexBuffer()
 
 	// generate all of the control points in a straight line from the base to the top
 	vec3 controlPoints[totalControlPoints];
-	float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
+	// totalControlPoints-1 so that fireTop is one of the control points
+	float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); 
+	#pragma omp parallel for
 	for (int i = 0; i < totalControlPoints; i++)
 		controlPoints[i] = fireBase + (float)i*controlPointStep * fireTop;
 
@@ -75,6 +74,7 @@ void SceneShader::createFireVertexBuffer()
 
 	// C[i] is there so thatwe can skip some loops in the next for loop
 	// since, under these conditions, C[i]= either the fire base or the fire top, i saved some processing and did it this way
+	#pragma omp parallel for
 	for (int i = 0; i < numOfKnots; i++)
 	{
 		if (i <= degree)
@@ -91,9 +91,25 @@ void SceneShader::createFireVertexBuffer()
 		}
 	}
 
+	#pragma omp parallel for
 	for (int knot = degree + 1; knot < n; knot++)
 		for (int i = 0; i < numOfKnots; i++)
 			C[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
+
+
+
+	fireTexture = loadTexture(fireTextureFile);
+
+	glGenVertexArrays(1, &fireVertexArray);
+	glBindVertexArray(fireVertexArray);
+
+	glGenBuffers(1, &fireVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, fireVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(C), C, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0);
 }
 
 

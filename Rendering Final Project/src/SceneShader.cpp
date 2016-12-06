@@ -3,16 +3,32 @@
 float time = 0.f;
 vec3 lightPosition = vec3(0.2f, 0.2f, 0.f);
 
+void SceneShader::renderFire()
+{
+	glBindVertexArray(fireVertexArray);
+	glUseProgram(fireProgram);
+
+	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
+	passBasicUniforms(&fireProgram);
+
+	glPointSize(30.0f);
+	glDrawArrays(GL_POINTS, 0, 1);
+
+	texture.unbind2DTexture();
+	glBindVertexArray(0);
+}
+
 void SceneShader::renderLogs()
 {
 	glBindVertexArray(logsVertexArray);
-	glUseProgram(programLogs);
+	glUseProgram(logsProgram);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	texture.bind2DTexture(programLogs, logsTexture, std::string("image"));
-	passBasicUniforms(&programLogs);
+
+	texture.bind2DTexture(logsProgram, logsTexture, std::string("image"));
+	passBasicUniforms(&logsProgram);
 	
-	glUniform1f(glGetUniformLocation(programLogs, "time"), time);
+	glUniform1f(glGetUniformLocation(logsProgram, "time"), time);
 
 	glDrawElements(GL_TRIANGLES, logsMesh->faces.size() * 3, GL_UNSIGNED_INT, 0);
 	texture.unbind2DTexture();
@@ -23,11 +39,12 @@ void SceneShader::renderLogs()
 void SceneShader::renderSkybox()
 {
 	glBindVertexArray(skyboxVertexArray);
-	glUseProgram(programSkybox);
+	glUseProgram(skyboxProgram);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	texture.bind2DTexture(programSkybox, skyboxTexture, std::string("image"));
-	passBasicUniforms(&programSkybox);
+
+	texture.bind2DTexture(skyboxProgram, skyboxTexture, std::string("image"));
+	passBasicUniforms(&skyboxProgram);
 
 	glDrawElements(GL_TRIANGLES, skyboxMesh->faces.size() * 3, GL_UNSIGNED_INT, 0);
 	texture.unbind2DTexture();
@@ -38,12 +55,12 @@ void SceneShader::renderSkybox()
 void SceneShader::renderFloor()
 {
 	glBindVertexArray(floorVertexArray);
-	glUseProgram(programFloor);
-	texture.bind2DTexture(programFloor, floorTexture, std::string("image"));
-	passBasicUniforms(&programFloor);
+	glUseProgram(floorProgram);
 
-	texture.bind2DTexture(programFloor, logsTexture, std::string("imagelog"));
-	glUniform1f(glGetUniformLocation(programLogs, "time"), time);
+	texture.bind2DTexture(floorProgram, floorTexture, std::string("image"));
+	passBasicUniforms(&floorProgram);
+
+	glUniform1f(glGetUniformLocation(logsProgram, "time"), time);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	texture.unbind2DTexture();
@@ -52,9 +69,9 @@ void SceneShader::renderFloor()
 
 SceneShader::SceneShader() : Shader()
 {
-	programFloor = 0;
-	programLogs = 0;
-	programSkybox = 0;
+	floorProgram = 0;
+	logsProgram = 0;
+	skyboxProgram = 0;
 	floorVertexArray = -1;
 	logsVertexArray = -1;
 	skyboxVertexArray = -1;
@@ -78,6 +95,7 @@ void SceneShader::render()
 	mat4 rotationX = rotate(rotationY, yRot  * PI / 180.0f, vec3(0.f, 1.f, 0.f));
 	modelview *= rotationX;
 
+	renderFire();
 	renderFloor();
 	renderLogs();
 	renderSkybox();
@@ -87,15 +105,17 @@ void SceneShader::render()
 
 void SceneShader::buildShaders()
 {
+	fireProgram = compile_shaders(		"./shaders/fire/fire.vert",
+										"./shaders/fire/fire.frag");
 
-	programLogs		= compile_shaders(	"./shaders/logs/logs.vert",
+	logsProgram		= compile_shaders(	"./shaders/logs/logs.vert",
 										"./shaders/logs/logs.geom",
 										"./shaders/logs/logs.frag");
 
-	programFloor	= compile_shaders(	"./shaders/floor/floor.vert",
+	floorProgram	= compile_shaders(	"./shaders/floor/floor.vert",
 										"./shaders/floor/floor.frag");
 
-	programSkybox	= compile_shaders(	"./shaders/skybox/skybox.vert",	
+	skyboxProgram	= compile_shaders(	"./shaders/skybox/skybox.vert",	
 										"./shaders/skybox/skybox.frag");
 }
 
@@ -108,6 +128,9 @@ void SceneShader::passBasicUniforms(GLuint* program)
 
 void SceneShader::shutdown()
 {
+	glDeleteBuffers(1, &fireVertexBuffer);
+	glDeleteVertexArrays(1, &fireVertexArray);
+
 	glDeleteBuffers(1, &logsVertexBuffer);
 	glDeleteBuffers(1, &logsNormalBuffer);
 	glDeleteBuffers(1, &logsIndicesBuffer);

@@ -39,6 +39,7 @@ public:
 	void shutdown ();
 	void render();
 
+	void renderFire();
 	void renderLogs();
 	void renderSkybox();
 	void renderFloor();
@@ -65,11 +66,10 @@ private:
 	GLuint loadTexture(std::string file_path);
 
 	// variables
-	GLuint programLight;
-	GLuint programFloor;
-	GLuint programLogs;
-	GLuint programSkybox;
-	GLuint programFire;
+	GLuint floorProgram;
+	GLuint logsProgram;
+	GLuint skyboxProgram;
+	GLuint fireProgram;
 
 	GLuint floorVertexArray;
 	GLuint floorVertexBuffer;
@@ -82,6 +82,9 @@ private:
 	GLuint logsCylUVBuffer;
 	GLuint logsIndicesBuffer;
 	GLuint logsTexture;
+
+	GLuint fireVertexArray;
+	GLuint fireVertexBuffer;
 
 	GLuint skyboxVertexArray;
 	GLuint skyboxVertexBuffer;
