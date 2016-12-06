@@ -7,83 +7,97 @@ std::string fireTextureFile =		"textures/fire_profile_texture.png";
 std::string skybox =	"./models/skybox.ply";
 std::string logs =		"./models/Logs.ply";
 
-std::string fireTextureFile = "textures/fire_profile_texture.png";
+void printVec3(vec3 v){std::cout << v.x << "\t" << v.y << "\t" << v.z << "\t" << std::endl;}
 
-float degToRad(float deg){return deg * PI / 180.f;}
+float spline(float knot, float knots[], float numOfKnots, int i, int p)
+{
+	float	t = knot,
+			ti = knots[i],
+			ti1 = knots[i + 1],
+			tip = knots[i + p],
+			tip1 = knots[i + p + 1];
+
+	if (p == 0.f)
+		if (ti <= t && t < ti1) return 1.f;
+		else					return 0.f;
+	else
+	{
+		float	ratio1	= 0.f, 
+				ratio2	= 0.f,
+				den1	= tip  - ti,
+				den2	= tip1 - ti1;
+
+		// if a denominator = 0 (nan return), simply make that ratio 0.
+		if (den1 == 0.f) ratio1 = 0.f;
+		else
+		{
+			ratio1 = (t - ti) / den1;
+			ratio1 *= spline(knot, knots, numOfKnots, i, p - 1);
+		}
+
+
+		if (den2 == 0.f) ratio2 = 0.f;
+		else
+		{
+			ratio2 = (tip1 - t) / den2;
+			ratio2 *= spline(knot, knots, numOfKnots, i + 1, p - 1);
+		}
+		return ratio1 + ratio2;
+	}
+}
 
 void SceneShader::createFireVertexBuffer()
 {
 	fireTexture = loadTexture(fireTextureFile);
 
+	vec3	fireBase = vec3(0.f, 0.f, 0.f),
+			fireTop	 = vec3(0.f, 0.f, 1.f);
 
-	//This can also count for base and direction for creation of control points below
-	glm::vec3 fireBase = glm::vec3(0.f, 0.f, 0.f);
-	glm::vec3 fireTop = glm::vec3(0.f, 0.f, 1.f);
 
-	const unsigned int totalControlPoints = 4;
+	const int	totalControlPoints	= 10,					// desired nmumber of control points
+				n					= totalControlPoints,
+				degree				= 3,					// 3rd degree curve (why not?)
+				numOfKnots			= (totalControlPoints - 1) + degree + 2;	// number of knot values
 
-	glm::vec3 controlPoints[totalControlPoints + 1]; // +1 becasue we also need the top point
+	float knots[numOfKnots];
 
-	for (unsigned int i = 0; i <= totalControlPoints; i++) // <=  so we get tot the top point
+	// generate all of the control points in a straight line from the base to the top
+	vec3 controlPoints[totalControlPoints];
+	float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
+	for (int i = 0; i < totalControlPoints; i++)
+		controlPoints[i] = fireBase + (float)i*controlPointStep * fireTop;
+
+	// generate the knot points. the if an the else keep the spline closed. Knot spacing is uniform, [0,1]
+	// equation from fire paper
+
+	// array holding the final position of the knots
+	vec3 C[numOfKnots];
+
+	// C[i] is there so thatwe can skip some loops in the next for loop
+	// since, under these conditions, C[i]= either the fire base or the fire top, i saved some processing and did it this way
+	for (int i = 0; i < numOfKnots; i++)
 	{
-		// form a list of control points in a line from the base to the top.
-		// no variation in the line yet
-		controlPoints[i] = fireBase + (((float)i / (float)totalControlPoints) * fireTop);
+		if (i <= degree)
+		{
+			knots[i] = 0.f; 
+			C[i] = fireBase;
+		}
+		else if (i < n)
+			knots[i] = (float)(i - degree) / (float)(n - degree);
+		else
+		{
+			knots[i] = 1.f;
+			C[i] = fireTop;
+		}
 	}
 
-
-
-	// these are the coordinates for a point in the flame. x,y [-1, 1]. z [0,1]
-	// do the texture work in the shader
-	/*
-	float tex_x;
-	float tex_y;
-	float tex_z;
-
-	// calc uv and access texture like any other
-	glm::vec2 uv;
-	uv.x = sqrt((tex_x * tex_x) + (tex_y * tex_y));
-	uv.y = tex_z;*/
-
-	unsigned int degree = 3; // bezier curve degree
-
-
-	float knot[10];	//Knot vlaue
-	float p[10];	//control point
-	float N[10][10];	// B-spline basis Function
-
-	float C;
-	for (unsigned int i = 0; i < totalControlPoints; i++)
-	{
-		C += N[i][degree] * 5;//controlPoints[i];
-	}
-
-	// there is a velocity function in the paper to sim movement
-	// solving for P from P' in GPU is difficult and error prone, solving for P' from P in CPU is easy and reliable
+	for (int knot = degree + 1; knot < n; knot++)
+		for (int i = 0; i < numOfKnots; i++)
+			C[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
 }
 
-float bsplineBasis(float knot, unsigned int  iterator, unsigned int totalControlPoints, float t_i[], float* N[], unsigned int degree)
-{
-	int p = 0;	//B-spline iterator
 
-	if (i < degree) t_i[i] = 0.f;
-	else if (degree < i && i < n) { t_i[i] = (i - degree) / (n - degree); }
-	else t_i[i] = 1.f;
 
-	// I am representing t as t[0] here as i do not know what t is.
-	if (p == 0)
-	{
-		if (t_i[i] <= t < t_i[i + 1]) N[i][0] = 1.f;
-		else N[i][0] = 0.f;
-	}
-	else
-	{
-		float a = ((t - t_i[i]) / (t_i[i + p] - t_i[i])) * N[i][p - 1];
-		float b = ((t_i[i + p + 1] - t_i[0]) / (t_i[i + p + 1] - t_i[i + 1])) * N[i + 1][p - 1];
-		N[i][p] = a + b;
-	}
-	return 0;
-}
 
 void SceneShader::createLogsVertexBuffer()
 {
@@ -105,11 +119,11 @@ void SceneShader::createLogsVertexBuffer()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(1);
 
-	std::vector<glm::vec2> uvs = calculateCylindricalUVCoordinates(logsMesh);
+	std::vector<vec2> uvs = calculateCylindricalUVCoordinates(logsMesh);
 
 	glGenBuffers(1, &logsCylUVBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, logsCylUVBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), uvs.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(vec2), uvs.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(2);
 
@@ -140,11 +154,11 @@ void SceneShader::createSkyboxVertexBuffer()
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(1);
 
-	std::vector<glm::vec2> uvs = calculateSphereicalUVCoordinates(skyboxMesh);
+	std::vector<vec2> uvs = calculateSphereicalUVCoordinates(skyboxMesh);
 
 	glGenBuffers(1, &skyboxCylUVBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, skyboxCylUVBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), uvs.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(vec2), uvs.data(), GL_STATIC_DRAW);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(2);
 
@@ -229,9 +243,9 @@ trimesh::TriMesh* SceneShader::readMesh(std::string filename, std::vector<unsign
 	return mesh;
 }
 
-std::vector<glm::vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::TriMesh* mesh)
+std::vector<vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::TriMesh* mesh)
 {
-	std::vector<glm::vec2> uv;
+	std::vector<vec2> uv;
 	float V;
 	float U;
 	float max_y;
@@ -244,30 +258,30 @@ std::vector<glm::vec2> SceneShader::calculateSphereicalUVCoordinates(trimesh::Tr
 	bool toggle = false;
 	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
 	{
-		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
+		vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
 
 		V = (PIo2 - (vertex.y / max_y)) / (PI / 4.f);
-		U = (glm::atan(vertex.x, vertex.z) / PI2) + 0.5f;
+		U = (atan(vertex.x, vertex.z) / PI2) + 0.5f;
 
 		if (U < 0.25f) toggle = true;
 		if (toggle && (U - 0.7f) > 0.f) U = 0.f;
 
-		uv.push_back(glm::vec2(U, V));
+		uv.push_back(vec2(U, V));
 	}
 	return uv;
 }
 
-std::vector<glm::vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh)
+std::vector<vec2> SceneShader::calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh)
 {
-	std::vector<glm::vec2> uv;
+	std::vector<vec2> uv;
 	float U, V;
 	for (unsigned int i = 0; i < mesh->vertices.size(); i++)
 	{
-		glm::vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
-		U = glm::atan(vertex.x, vertex.z) / PI2;
+		vec3 vertex(mesh->vertices[i][0], mesh->vertices[i][1], mesh->vertices[i][2]);
+		U = atan(vertex.x, vertex.z) / PI2;
 		V = vertex.y;
 
-		uv.push_back(glm::vec2(U, V));
+		uv.push_back(vec2(U, V));
 	}
 
 	return uv;

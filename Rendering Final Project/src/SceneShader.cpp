@@ -1,7 +1,7 @@
 #include "SceneShader.h"
 
 float time = 0.f;
-glm::vec3 lightPosition = glm::vec3(0.2f, 0.2f, 0.f);
+vec3 lightPosition = vec3(0.2f, 0.2f, 0.f);
 
 void SceneShader::renderLogs()
 {
@@ -66,16 +66,16 @@ SceneShader::SceneShader() : Shader()
 
 void SceneShader::render()
 {
-	projection = glm::perspective(45.0f, aspectRatio, 0.01f, 100.0f);
+	projection = perspective(45.0f, aspectRatio, 0.01f, 100.0f);
 
-	glm::vec3 eye(0.f, 0.3f, 2.f);
-	glm::vec3 center(0.f, 0.f, 0.f);
-	glm::vec3 up(0.f, 1.f, 0.f);
+	vec3 eye(0.f, 0.3f, 2.f);
+	vec3 center(0.f, 0.f, 0.f);
+	vec3 up(0.f, 1.f, 0.f);
 	eye *= zTranslation;
-	modelview = glm::lookAt(eye, center, up);
+	modelview = lookAt(eye, center, up);
 
-	glm::mat4 rotationY = glm::rotate(identity , xRot  * PI / 180.0f, glm::vec3(1.f, 0.f, 0.f));
-	glm::mat4 rotationX = glm::rotate(rotationY, yRot  * PI / 180.0f, glm::vec3(0.f, 1.f, 0.f));
+	mat4 rotationY = rotate(identity , xRot  * PI / 180.0f, vec3(1.f, 0.f, 0.f));
+	mat4 rotationX = rotate(rotationY, yRot  * PI / 180.0f, vec3(0.f, 1.f, 0.f));
 	modelview *= rotationX;
 
 	renderFloor();
@@ -101,9 +101,9 @@ void SceneShader::buildShaders()
 
 void SceneShader::passBasicUniforms(GLuint* program)
 {
-	glUniformMatrix4fv(glGetUniformLocation(*program, "modelview"), 1, GL_FALSE, glm::value_ptr(modelview));
-	glUniformMatrix4fv(glGetUniformLocation(*program, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	glUniform3fv(glGetUniformLocation(*program, "lightPosition"), 1, glm::value_ptr(lightPosition));
+	glUniformMatrix4fv(glGetUniformLocation(*program, "modelview"), 1, GL_FALSE, value_ptr(modelview));
+	glUniformMatrix4fv(glGetUniformLocation(*program, "projection"), 1, GL_FALSE, value_ptr(projection));
+	glUniform3fv(glGetUniformLocation(*program, "lightPosition"), 1, value_ptr(lightPosition));
 }
 
 void SceneShader::shutdown()
@@ -127,6 +127,7 @@ void SceneShader::startup()
 	createLogsVertexBuffer();
 	createFloorVertexBuffer();
 	createSkyboxVertexBuffer();
+	createFireVertexBuffer();
 }
 
 void SceneShader::setZTranslation(float z) { zTranslation = z; }

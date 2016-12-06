@@ -165,6 +165,8 @@
   <ItemGroup>
     <None Include="models\Logs.ply" />
     <None Include="models\skybox.ply" />
+    <None Include="shaders\fire\fire.frag" />
+    <None Include="shaders\fire\fire.vert" />
     <None Include="shaders\floor\floor.frag" />
     <None Include="shaders\floor\floor.vert" />
     <None Include="shaders\logs\logs.frag" />

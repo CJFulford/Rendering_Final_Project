@@ -25,6 +25,8 @@ const float PI2 = 2.f * PI;
 const float PIo2 = PI / 2.f;
 const glm::mat4 identity(1.0f);
 
+using namespace glm;
+
 class SceneShader : public Shader
 {
 public:
@@ -90,8 +92,8 @@ private:
 
 	GLuint fireTexture;
 
-	glm::mat4 modelview;
-	glm::mat4 projection;
+	mat4 modelview;
+	mat4 projection;
 
 	float zTranslation;
 	float xRot;

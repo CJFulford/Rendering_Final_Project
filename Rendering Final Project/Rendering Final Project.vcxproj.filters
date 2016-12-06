@@ -37,6 +37,9 @@
     <Filter Include="Source Files\shaders\skybox">
       <UniqueIdentifier>{e8331218-fbe7-46f2-9129-ff7b917d2e16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders\fire">
+      <UniqueIdentifier>{cb26ec75-d7f4-4b38-a514-121f5397f7d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\SceneShader.h">
@@ -82,6 +85,12 @@
     </None>
     <None Include="shaders\logs\logs.geom">
       <Filter>Source Files\shaders\logs</Filter>
+    </None>
+    <None Include="shaders\fire\fire.frag">
+      <Filter>Source Files\shaders\fire</Filter>
+    </None>
+    <None Include="shaders\fire\fire.vert">
+      <Filter>Source Files\shaders\fire</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
