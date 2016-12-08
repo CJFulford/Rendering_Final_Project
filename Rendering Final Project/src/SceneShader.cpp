@@ -11,6 +11,8 @@ void SceneShader::renderFire()
 	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
 	passBasicUniforms(&fireProgram);
 
+	glUniform1f(glGetUniformLocation(fireProgram, "time"), time);
+
 	glPointSize(30.0f);
 	glDrawArrays(GL_POINTS, 0, 14);
 

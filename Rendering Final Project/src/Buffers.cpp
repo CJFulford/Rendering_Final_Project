@@ -99,7 +99,6 @@ void SceneShader::createFireVertexBuffer()
 			C[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
 
 
-
 	fireTexture = loadTexture(fireTextureFile);
 
 	glGenVertexArrays(1, &fireVertexArray);

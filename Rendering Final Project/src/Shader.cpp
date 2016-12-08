@@ -75,6 +75,22 @@ GLuint Shader::compile_shaders(const char* vertexFilename, const char* geometryF
 	return program;
 }
 
+GLuint Shader::compile_shaders( const char* vertexFilename, 
+								const char* tessContFileName,
+								const char* tessEvalFileName,
+								const char* geometryFilename, 
+								const char* fragmentFilename)
+{
+	GLuint program = glCreateProgram();
+	attachShader(program, vertexFilename, GL_VERTEX_SHADER);
+	attachShader(program, tessContFileName, GL_TESS_CONTROL_SHADER);
+	attachShader(program, tessEvalFileName, GL_TESS_EVALUATION_SHADER);
+	attachShader(program, geometryFilename, GL_GEOMETRY_SHADER);
+	attachShader(program, fragmentFilename, GL_FRAGMENT_SHADER);
+	glLinkProgram(program);
+	return program;
+}
+
 void Shader::attachShader(GLuint &program, const char* fileName, GLuint shaderType)
 {
 	GLuint shader;

@@ -25,8 +25,8 @@ public:
 protected:
 
     virtual GLuint compile_shaders ( const char* vertexFilename, const char* fragmentFilename );
-
     virtual GLuint compile_shaders( const char* vertexFilename, const char* geometryFilenameconst, const char* fragmentFilename );
+	virtual GLuint compile_shaders(const char * vertexFilename, const char * tessContFileName, const char * tessEvalFileName, const char * geometryFilename, const char * fragmentFilename);
 
 	void attachShader(GLuint & program, const char * fileName, GLuint shaderType);
 
