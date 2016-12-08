@@ -8,6 +8,8 @@ std::string fireTextureFile =		"textures/fire_profile_texture.png";
 std::string skybox =	"./models/skybox.ply";
 std::string logs =		"./models/Logs.ply";
 
+void printVec3(vec3 v) { std::cout << v.x << "\t" << v.y << "\t" << v.z << std::endl; }
+
 float spline(float knot, float knots[], int numOfKnots, int i, int p)
 {
 	float	t = knot,

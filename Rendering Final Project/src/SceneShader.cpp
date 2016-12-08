@@ -12,7 +12,7 @@ void SceneShader::renderFire()
 	passBasicUniforms(&fireProgram);
 
 	glPointSize(30.0f);
-	glDrawArrays(GL_POINTS, 0, 1);
+	glDrawArrays(GL_POINTS, 0, 14);
 
 	texture.unbind2DTexture();
 	glBindVertexArray(0);
