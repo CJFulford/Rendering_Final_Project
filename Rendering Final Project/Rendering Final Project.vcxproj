@@ -172,6 +172,9 @@
     <None Include="models\Logs.ply" />
     <None Include="models\skybox.ply" />
     <None Include="shaders\fire\fire.frag" />
+    <None Include="shaders\fire\fire.geom" />
+    <None Include="shaders\fire\fire.TCont" />
+    <None Include="shaders\fire\fire.TEval" />
     <None Include="shaders\fire\fire.vert" />
     <None Include="shaders\floor\floor.frag" />
     <None Include="shaders\floor\floor.vert" />

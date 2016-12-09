@@ -53,9 +53,9 @@ void SceneShader::createFireVertexBuffer()
 			fireTop	 = vec3(0.f, 1.f, 0.f);
 
 
-	const int	totalControlPoints	= 10,					// desired nmumber of control points
+	const int	totalControlPoints	= 10,	// desired nmumber of control points
 				n					= totalControlPoints,
-				degree				= 3,					// 3rd degree curve (why not?)
+				degree				= 3,			// 3rd degree curve (why not?)
 				numOfKnots			= (totalControlPoints - 1) + degree + 2;	// number of knot values
 
 	float knots[numOfKnots];
@@ -98,6 +98,7 @@ void SceneShader::createFireVertexBuffer()
 		for (int i = 0; i < numOfKnots; i++)
 			C[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
 
+	fireGeneratedPoints = sizeof(C) / sizeof(C[0]);
 
 	fireTexture = loadTexture(fireTextureFile);
 

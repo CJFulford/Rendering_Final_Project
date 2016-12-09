@@ -3,6 +3,21 @@
 float time = 0.f;
 vec3 lightPosition = vec3(0.2f, 0.2f, 0.f);
 
+void fireMotion(vec3 C[])
+{
+	// dx/dt = v + w(x,t) + d(T) + c(T, age)
+	// c(T, age) = =(beta) * g * (T0 - T) * age^2
+	// t = time
+	// T = temp
+	// v = velocity
+	// w() wind velocity as position and time
+	// d() velocity from high energy dispersion as a function of temp
+	// c() velocity attributed to thermal boutancfy as a function of temp adn particale age
+	// beta thermal expansion coefficient of ideal ga (1/T)
+	// g = acceleration due to gravity
+	// T0 = environments ambient temp (usually 300K, i believe kelvin)
+}
+
 void SceneShader::renderFire()
 {
 	glBindVertexArray(fireVertexArray);
@@ -11,10 +26,8 @@ void SceneShader::renderFire()
 	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
 	passBasicUniforms(&fireProgram);
 
-	glUniform1f(glGetUniformLocation(fireProgram, "time"), time);
-
-	glPointSize(30.0f);
-	glDrawArrays(GL_POINTS, 0, 14);
+	
+	glDrawArrays(GL_LINE_STRIP, 0, 14);
 
 	texture.unbind2DTexture();
 	glBindVertexArray(0);
@@ -102,7 +115,7 @@ void SceneShader::render()
 	renderLogs();
 	renderSkybox();
 	
-	time += 0.0003f;
+	time += 0.003f;
 }
 
 void SceneShader::buildShaders()

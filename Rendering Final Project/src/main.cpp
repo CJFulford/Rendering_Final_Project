@@ -8,7 +8,7 @@ float rotate_y = 0.0;
 float translate_z = 1.0f;
 
 #define maxZoom 1.2f
-#define minZoom 0.5f
+#define minZoom 0.3f
 #define minRotate 0
 #define maxRotate 90
 
