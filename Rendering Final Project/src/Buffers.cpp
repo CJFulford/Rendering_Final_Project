@@ -50,7 +50,7 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 void SceneShader::createFireVertexBuffer()
 {
 	vec3	fireBase = vec3(0.f, 0.f, 0.f),
-			fireTop	 = vec3(0.f, 1.f, 0.f);
+			fireTop	 = vec3(0.f, 0.6f, 0.f);
 
 
 	const int	totalControlPoints	= 10,	// desired nmumber of control points

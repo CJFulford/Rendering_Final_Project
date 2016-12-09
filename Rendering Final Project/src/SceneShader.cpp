@@ -6,7 +6,7 @@ vec3 lightPosition = vec3(0.2f, 0.2f, 0.f);
 void fireMotion(vec3 C[])
 {
 	// dx/dt = v + w(x,t) + d(T) + c(T, age)
-	// c(T, age) = =(beta) * g * (T0 - T) * age^2
+	// c(T, age) = (beta) * g * (T0 - T) * age^2
 	// t = time
 	// T = temp
 	// v = velocity
@@ -26,7 +26,8 @@ void SceneShader::renderFire()
 	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
 	passBasicUniforms(&fireProgram);
 
-	
+	glUniform1f(glGetUniformLocation(fireProgram, "time"), time);
+
 	glDrawArrays(GL_LINE_STRIP, 0, 14);
 
 	texture.unbind2DTexture();
