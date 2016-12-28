@@ -18,7 +18,7 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 			tip = knots[i + p],
 			tip1 = knots[i + p + 1];
 
-	if (p == 0.f)
+	if (p < err)
 		if (ti <= t && t < ti1) return 1.f;
 		else					return 0.f;
 	else
@@ -29,7 +29,7 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 				den2	= tip1 - ti1;
 
 		// if a denominator = 0 (nan return), simply make that ratio 0.
-		if (den1 == 0.f) ratio1 = 0.f;
+		if (den1 < err) ratio1 = 0.f;
 		else
 		{
 			ratio1 = (t - ti) / den1;
@@ -37,7 +37,7 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 		}
 
 
-		if (den2 == 0.f) ratio2 = 0.f;
+		if (den2 < err) ratio2 = 0.f;
 		else
 		{
 			ratio2 = (tip1 - t) / den2;
@@ -73,15 +73,11 @@ void SceneShader::createFireVertexBuffer()
 
 	float knots[numOfKnots];
 
-	
-	// totalControlPoints-1 so that fireTop is one of the control points
-
 	#define line
 	#ifdef line
-		float controlPointStep = 1.f / ((float)totalControlPoints - 1.f);
-		#pragma omp parallel for
-		for (int i = 0; i < totalControlPoints; i++)
-			controlPoints[i] = vec3(0.f, 0.f, 0.f) + (float)i*controlPointStep * vec3(0.f, 0.7f, 0.f);
+		float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
+		for (int i = 1; i < totalControlPoints; i++)
+			controlPoints[i] = vec3(0.f, 0.f, 0.f) + (float)i * controlPointStep * vec3(0.f, 0.7f, 0.f);
 	#endif
 	
 	// generate the knot points. the if an the else keep the spline closed. Knot spacing is uniform, [0,1]
@@ -91,28 +87,24 @@ void SceneShader::createFireVertexBuffer()
 	vec3 C[numOfKnots];
 
 	// C[i] is there so thatwe can skip some loops in the next for loop
-	// since, under these conditions, C[i]= either the fire base or the fire top, i saved some processing and did it this way
-	#pragma omp parallel for
 	for (int i = 0; i < numOfKnots; i++)
 	{
 		if (i <= degree)
-		{
 			knots[i] = 0.f; 
-			C[i] = controlPoints[0];
-		}
 		else if (i < n)
-			knots[i] = (float)(i - degree) / (float)(n - degree);
-		else
 		{
-			knots[i] = 1.f;
-			C[i] = controlPoints[totalControlPoints];
+			knots[i] = (float)(i - degree) / (float)(n - degree);
+			if (knots[i] < err) knots[i] = 0.f;
 		}
+		else
+			knots[i] = 1.f;
 	}
 
-	#pragma omp parallel for
-	for (int knot = degree + 1; knot < n; knot++)
+
+	for (int knot = 0; knot < numOfKnots; knot++)
 		for (int i = 0; i < numOfKnots; i++)
 			C[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
+
 
 	vec3 normal[numOfKnots];	// normal vector for each knot point
 	vec3 velocity[numOfKnots];	// velocity vector for each knot point
@@ -134,8 +126,6 @@ void SceneShader::createFireVertexBuffer()
 			normal[i] = normalize(cross(velocity[i], vec3(1.f, 0.f, 0.f)));
 		}
 	}
-
-
 
 	fireGeneratedPoints = sizeof(C) / sizeof(C[0]);
 
