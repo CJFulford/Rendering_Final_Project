@@ -1,7 +1,7 @@
 #version 430 core
 
-layout(lines) in;
-layout(triangle_strip, max_vertices = 90) out;
+layout(points) in;
+layout(triangle_strip, max_vertices = 3) out;
 
 uniform mat4 modelview;
 uniform mat4 projection;
@@ -36,7 +36,20 @@ float distance(vec3 v1, vec3 v2)
 
 void main (void)
 {
-	vec3 cube[8];
+	
+	vertex = vert[0];
+	gl_Position = projection * modelview * (gl_in[0].gl_Position + vec4(0.f, 0.f, 0.f, 0.f)); 	
+	EmitVertex();
+	
+	gl_Position = projection * modelview * (gl_in[0].gl_Position + vec4(0.2f, 0.f, 0.f, 0.f)); 	
+	EmitVertex();
+	
+	gl_Position = projection * modelview * (gl_in[0].gl_Position + vec4(0.2f, 0.f, 0.5f, 0.f)); 	
+	EmitVertex();
+	
+	EndPrimitive();
+	
+	/*vec3 cube[8];
 	int count = 0;
 
 	// for each of the 2 vertices that enter this program (lines provide 2 verticies per input), find the 8 corners of the fire volume they define
@@ -76,6 +89,7 @@ void main (void)
 	
 	int		minI = 0, maxI = 0;
 	float	minD = distance(cam, cube[0]), maxD = minD;
+	// cube[0] is auto assigned so it does not need to be checked
 	for (int i = 1; i < 8; i++)
 	{
 		float d = distance(cam, cube[i]);
@@ -85,7 +99,8 @@ void main (void)
 
 	// indicies in cube array that define all edges in volume
 	ivec2 indicies[] = 
-	{	ivec2(0,1),
+	{	
+		ivec2(0,1),
 		ivec2(0,3),
 		ivec2(0,4),
 		ivec2(1,2),
@@ -96,18 +111,19 @@ void main (void)
 		ivec2(4,5),
 		ivec2(4,7),
 		ivec2(5,6),
-		ivec2(6,7)};
+		ivec2(6,7)
+	};
 	
 	// list for recording frontface vs back face for each vertex. is cube so 8 vertices
 	int front[8];
 	
 	// http://http.developer.nvidia.com/GPUGems/gpugems_ch39.html
 	
-	vec3 planeNormal = normalize(cam - cube[minI]);
+	vec3 planeNormal = normalize(cube[minI] - cam);
 
 	// for how ever many slices per volume, walk the slicing plane forward, calculate the vertices, and send out the triangles
 	for (	
-		vec3 planePoint = cube[minI]; 
+		vec3 planePoint = cube[minI];
 		distance(planePoint, cam) < maxD;  
 		planePoint += planeNormal * ((maxD - minD) / numOfSlices) // normal points from camera to cube so add since we are walking from min distance to max distance
 		)
@@ -216,25 +232,25 @@ void main (void)
 		
 		// create as many triangles as we need to fill the plane.
 		// needs to loop so final is % c
-		/*if (c == 3)
+		if (c == 3)
 		{
 			gl_Position = projection * vec4(sortedPoints[0], 0.f);	EmitVertex();
 			gl_Position = projection * vec4(sortedPoints[1], 0.f); 	EmitVertex();
 			gl_Position = projection * vec4(sortedPoints[2], 0.f); 	EmitVertex();
 			EndPrimitive();
 			continue;
-		}*/
+		}
 		for (int i = 0; i < c; i++)
 		{
-			gl_Position = projection * modelview * vec4(0.1f, 0.1f, 0.0f, 0.f); EmitVertex();
-			gl_Position = projection * modelview * vec4(-0.1f, 0.1f, 0.0f, 0.f); EmitVertex();
-			gl_Position = projection * modelview * vec4(0.0f, 0.2f, 0.0f, 0.f); EmitVertex();
+			gl_Position = projection * modelview * vec4(0.1f, 0.25f, 0.0f, 0.f); EmitVertex();
+			gl_Position = projection * modelview * vec4(-0.1f, 0.25f, 0.0f, 0.f); EmitVertex();
+			gl_Position = projection * modelview * vec4(0.0f, 0.5f, 0.0f, 0.f); EmitVertex();
 			//gl_Position = projection * vec4(sortedPoints[i], 0.f);			EmitVertex();
 			//gl_Position = projection * vec4(sortedPoints[(i + 1) % c], 0.f); 	EmitVertex();
 			//gl_Position = projection * vec4(midPoint, 0.f); 					EmitVertex();
 		}
 		EndPrimitive();
-	}
+	}*/
 }
 
 

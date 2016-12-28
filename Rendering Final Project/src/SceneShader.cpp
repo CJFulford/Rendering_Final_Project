@@ -7,16 +7,18 @@ void SceneShader::renderFire()
 {
 	glBindVertexArray(fireVertexArray);
 	glUseProgram(fireProgram);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
 	passBasicUniforms(&fireProgram);
 
-	glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
+	//glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
+	glDrawArrays(GL_POINTS, 0, fireGeneratedPoints); 
+	//glPointSize(30.f);
 
 	texture.unbind2DTexture();
-	glDisable(GL_BLEND);
+	//glDisable(GL_BLEND);
 	glBindVertexArray(0);
 }
 
@@ -130,6 +132,8 @@ void SceneShader::passBasicUniforms(GLuint* program)
 void SceneShader::shutdown()
 {
 	glDeleteBuffers(1, &fireVertexBuffer);
+	glDeleteBuffers(1, &fireVelocityBuffer);
+	glDeleteBuffers(1, &fireNormalBuffer);
 	glDeleteVertexArrays(1, &fireVertexArray);
 
 	glDeleteBuffers(1, &logsVertexBuffer);

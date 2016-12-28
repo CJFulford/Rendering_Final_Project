@@ -16,5 +16,5 @@ void main (void)
 	uv.x = sqrt((vertex.x * vertex.x) + (vertex.y * vertex.y));
 	uv.y = vertex.z;
 
-	color = vec4(0.f, 1.f, 0.f, 1.f); // just leave as green for default
+	color = vec4(1.f, 0.f, 0.f, 1.f); // just leave as green for default
 }
