@@ -49,25 +49,41 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 
 void SceneShader::createFireVertexBuffer()
 {
-	vec3	fireBase = vec3(0.f, 0.f, 0.f),
-			fireTop	 = vec3(0.f, 0.6f, 0.f);
+
+	// 10
+	vec3 controlPoints[] =
+	{ 
+		vec3(0.f, 0.f, 0.f),
+		vec3(0.05f, 0.1f, 0.f),
+		vec3(0.1f, 0.2f, 0.f),
+		vec3(0.15f, 0.35f, 0.f),
+		vec3(0.2f, 0.4f, 0.f),
+		vec3(0.3f, 0.425f, 0.f),
+		vec3(0.35f, 0.45f, 0.f),
+		vec3(0.4f, 0.5f, 0.f),
+		vec3(0.45f, 0.6f, 0.f),
+		vec3(0.5f, 0.7f, 0.f) 
+	};
 
 
-	const int	totalControlPoints	= 10,	// desired nmumber of control points
+	const int	totalControlPoints	= sizeof(controlPoints) / sizeof(controlPoints[0]),	// desired nmumber of control points
 				n					= totalControlPoints,
 				degree				= 3,			// 3rd degree curve (why not?)
 				numOfKnots			= (totalControlPoints - 1) + degree + 2;	// number of knot values
 
 	float knots[numOfKnots];
 
-	// generate all of the control points in a straight line from the base to the top
-	vec3 controlPoints[totalControlPoints];
+	
 	// totalControlPoints-1 so that fireTop is one of the control points
-	float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); 
-	#pragma omp parallel for
-	for (int i = 0; i < totalControlPoints; i++)
-		controlPoints[i] = fireBase + (float)i*controlPointStep * fireTop;
 
+	#define line
+	#ifdef line
+		float controlPointStep = 1.f / ((float)totalControlPoints - 1.f);
+		#pragma omp parallel for
+		for (int i = 0; i < totalControlPoints; i++)
+			controlPoints[i] = vec3(0.f, 0.f, 0.f) + (float)i*controlPointStep * vec3(0.f, 0.7f, 0.f);
+	#endif
+	
 	// generate the knot points. the if an the else keep the spline closed. Knot spacing is uniform, [0,1]
 	// equation from fire paper
 
@@ -82,14 +98,14 @@ void SceneShader::createFireVertexBuffer()
 		if (i <= degree)
 		{
 			knots[i] = 0.f; 
-			C[i] = fireBase;
+			C[i] = controlPoints[0];
 		}
 		else if (i < n)
 			knots[i] = (float)(i - degree) / (float)(n - degree);
 		else
 		{
 			knots[i] = 1.f;
-			C[i] = fireTop;
+			C[i] = controlPoints[totalControlPoints];
 		}
 	}
 
@@ -97,6 +113,29 @@ void SceneShader::createFireVertexBuffer()
 	for (int knot = degree + 1; knot < n; knot++)
 		for (int i = 0; i < numOfKnots; i++)
 			C[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
+
+	vec3 normal[numOfKnots];	// normal vector for each knot point
+	vec3 velocity[numOfKnots];	// velocity vector for each knot point
+	for (int i = 0; i < numOfKnots; i++)
+	{
+		if (i == 0)
+		{
+			velocity[0] = C[1] - C[0];
+			normal[0] = normalize(cross(velocity[0], vec3(1.f, 0.f, 0.f)));
+		}
+		else if(i == numOfKnots - 1)
+		{
+			velocity[i] = velocity[i-1];
+			normal[i] = normal[i-1];
+		}
+		else
+		{
+			velocity[i] = C[i+1] - C[i];
+			normal[i] = normalize(cross(velocity[i], vec3(1.f, 0.f, 0.f)));
+		}
+	}
+
+
 
 	fireGeneratedPoints = sizeof(C) / sizeof(C[0]);
 
@@ -110,6 +149,18 @@ void SceneShader::createFireVertexBuffer()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(C), C, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
+
+	glGenBuffers(1, &fireNormalBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, fireNormalBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normal), normal, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(1);
+
+	glGenBuffers(1, &fireVelocityBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, fireVelocityBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(velocity), velocity, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);
 }

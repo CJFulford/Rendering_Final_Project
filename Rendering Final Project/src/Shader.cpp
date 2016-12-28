@@ -112,7 +112,7 @@ void Shader::attachShader(GLuint &program, const char* fileName, GLuint shaderTy
 		GLchar* strInfoLog = new GLchar[infoLogLength + 1];
 		glGetShaderInfoLog(shader, infoLogLength, NULL, strInfoLog);
 
-		std::cout << "\n" << fileName << "\t";	// Added this here to show where the error originated as "vertex shader" doesnt help when there are 4 of them"
+		std::cout << "\n\n" << fileName << std::endl;;	// Added this here to show where the error originated as "vertex shader" doesnt help when there are 4 of them"
 		fprintf(stderr, "Compilation error in shader vertex_shader: %s\n", strInfoLog);
 		delete[] strInfoLog;
 	}

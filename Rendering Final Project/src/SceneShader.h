@@ -85,6 +85,9 @@ private:
 
 	GLuint fireVertexArray;
 	GLuint fireVertexBuffer;
+	GLuint fireNormalBuffer;
+	GLuint fireVelocityBuffer;
+
 	int fireGeneratedPoints = 14;
 
 	GLuint skyboxVertexArray;

@@ -92,13 +92,13 @@
     <None Include="shaders\fire\fire.vert">
       <Filter>Source Files\shaders\fire</Filter>
     </None>
-    <None Include="shaders\fire\fire.geom">
-      <Filter>Source Files\shaders\fire</Filter>
-    </None>
     <None Include="shaders\fire\fire.TCont">
       <Filter>Source Files\shaders\fire</Filter>
     </None>
     <None Include="shaders\fire\fire.TEval">
+      <Filter>Source Files\shaders\fire</Filter>
+    </None>
+    <None Include="shaders\fire\fire.geom">
       <Filter>Source Files\shaders\fire</Filter>
     </None>
   </ItemGroup>

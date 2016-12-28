@@ -3,34 +3,20 @@
 float time = 0.f;
 vec3 lightPosition = vec3(0.2f, 0.2f, 0.f);
 
-void fireMotion(vec3 C[])
-{
-	// dx/dt = v + w(x,t) + d(T) + c(T, age)
-	// c(T, age) = (beta) * g * (T0 - T) * age^2
-	// t = time
-	// T = temp
-	// v = velocity
-	// w() wind velocity as position and time
-	// d() velocity from high energy dispersion as a function of temp
-	// c() velocity attributed to thermal boutancfy as a function of temp adn particale age
-	// beta thermal expansion coefficient of ideal ga (1/T)
-	// g = acceleration due to gravity
-	// T0 = environments ambient temp (usually 300K, i believe kelvin)
-}
-
 void SceneShader::renderFire()
 {
 	glBindVertexArray(fireVertexArray);
 	glUseProgram(fireProgram);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
 	passBasicUniforms(&fireProgram);
 
-	glUniform1f(glGetUniformLocation(fireProgram, "time"), time);
-
-	glDrawArrays(GL_LINE_STRIP, 0, 14);
+	glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
 
 	texture.unbind2DTexture();
+	glDisable(GL_BLEND);
 	glBindVertexArray(0);
 }
 
@@ -100,16 +86,14 @@ SceneShader::SceneShader() : Shader()
 void SceneShader::render()
 {
 	projection = perspective(45.0f, aspectRatio, 0.01f, 100.0f);
-
 	vec3 eye(0.f, 0.3f, 2.f);
 	vec3 center(0.f, 0.f, 0.f);
 	vec3 up(0.f, 1.f, 0.f);
-	eye *= zTranslation;
-	modelview = lookAt(eye, center, up);
+	modelview = lookAt(eye * zTranslation, center, up);
 
-	mat4 rotationY = rotate(identity , xRot  * PI / 180.0f, vec3(1.f, 0.f, 0.f));
-	mat4 rotationX = rotate(rotationY, yRot  * PI / 180.0f, vec3(0.f, 1.f, 0.f));
-	modelview *= rotationX;
+	mat4 rotationX = rotate(identity , xRot  * PI / 180.0f, vec3(1.f, 0.f, 0.f));
+	mat4 rotationY = rotate(rotationX, yRot  * PI / 180.0f, vec3(0.f, 1.f, 0.f));
+	modelview *= rotationY;
 
 	renderFire();
 	renderFloor();
@@ -121,7 +105,8 @@ void SceneShader::render()
 
 void SceneShader::buildShaders()
 {
-	fireProgram = compile_shaders(		"./shaders/fire/fire.vert",
+	fireProgram		= compile_shaders(	"./shaders/fire/fire.vert",
+										"./shaders/fire/fire.geom",
 										"./shaders/fire/fire.frag");
 
 	logsProgram		= compile_shaders(	"./shaders/logs/logs.vert",

@@ -12,8 +12,8 @@ float translate_z = 1.0f;
 #define minRotate 0
 #define maxRotate 90
 
-int width = 500;
-int height = 500;
+int width = 700;
+int height = width;
 
 GLFWwindow* window;
 SceneShader shader;

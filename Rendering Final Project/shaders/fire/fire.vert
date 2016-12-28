@@ -1,29 +1,18 @@
 #version 430 core
 
 layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec3 velocity;
 
-out vec3 vertex;
-
-uniform mat4 modelview;
-uniform mat4 projection;
-
-uniform float time;
+out vec3 vert;
+out vec3 norm;
+out vec3 vel;
 
 void main (void)
 {
-    vertex = position.xyz;
+	norm = normal;
+	vel = velocity;
+	vert = position.xyz;
 
-	if (vertex.y != 0)
-	{
-		// generate a spiral movement pattern, this will be replaced
-		// but is a proof of concept for now
-		vertex.x += cos(time * (1.f / (1.f - vertex.y)));
-		vertex.z += sin(time * (1.f / (1.f - vertex.y)));
-
-		// scale the spiral to adjust the radius of the fire.
-		// base it on the y dimension so that the base of the fire has a larger radius
-		vertex.xz *= (1.f - vertex.y) * 0.1f;
-	}
-
-    gl_Position = projection *  modelview * vec4(vertex, 1.f);
+    gl_Position = vec4(vert, 1.f);
 }
