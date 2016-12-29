@@ -13,7 +13,7 @@ out vec3 vertex;
 out vec3 col;
 
 const float PI = 3.14159265359,
-			scale = 0.25f,
+			scale = 0.4f,
 			numOfSlices = 8.f, // if update, change max verticies. so = 18 * numOSlices
 			err = 0.f;
 
