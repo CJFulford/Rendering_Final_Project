@@ -49,11 +49,6 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 
 void SceneShader::createFireVertexBuffer()
 {
-	
-
-	vec3 fireBase(0.f, 0.0f, 0.f);
-	vec3 fireTop(0.f, 0.6f, 0.f);
-
 
 	const int	totalControlPoints	= 10,	// desired nmumber of control points
 				n					= totalControlPoints,
@@ -64,6 +59,8 @@ void SceneShader::createFireVertexBuffer()
 
 	#define line
 	#ifdef line
+		vec3 fireBase(0.f, 0.0f, 0.f);
+		vec3 fireTop(0.f, 0.6f, 0.f);
 		vec3 controlPoints[totalControlPoints];
 		float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
 		for (int i = 1; i < totalControlPoints; i++)
@@ -127,6 +124,10 @@ void SceneShader::createFireVertexBuffer()
 
 	fireTexture = loadTexture(fireTextureFile);
 
+	float UV[numOfKnots];
+	for (int i = 0; i < numOfKnots; i++)
+		(float)i / ((float)numOfKnots - 1);
+
 	glGenVertexArrays(1, &fireVertexArray);
 	glBindVertexArray(fireVertexArray);
 
@@ -141,6 +142,12 @@ void SceneShader::createFireVertexBuffer()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(velocity), velocity, GL_STATIC_DRAW);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(1);
+
+	glGenBuffers(1, &fireUVBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, fireUVBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(UV), UV, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);
 

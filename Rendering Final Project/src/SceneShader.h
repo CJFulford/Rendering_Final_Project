@@ -87,6 +87,7 @@ private:
 	GLuint fireVertexArray;
 	GLuint fireVertexBuffer;
 	GLuint fireVelocityBuffer;
+	GLuint fireUVBuffer;
 
 	int fireGeneratedPoints = 0;
 

@@ -15,6 +15,7 @@ void SceneShader::renderFire()
 	passBasicUniforms(&fireProgram);
 
 	glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
+	//glDrawArrays(GL_LINES, 0 , fireGeneratedPoints);
 
 	texture.unbind2DTexture();
 	glDisable(GL_BLEND);
@@ -88,7 +89,7 @@ void SceneShader::render()
 	modelview *= rotationY;
 
 	renderFire();
-	//renderFloor();
+	renderFloor();
 	//renderLogs();
 	//renderSkybox();
 	
@@ -123,6 +124,7 @@ void SceneShader::shutdown()
 {
 	glDeleteBuffers(1, &fireVertexBuffer);
 	glDeleteBuffers(1, &fireVelocityBuffer);
+	glDeleteVertexArrays(1, &fireUVBuffer);
 	glDeleteVertexArrays(1, &fireVertexArray);
 
 	glDeleteBuffers(1, &logsVertexBuffer);

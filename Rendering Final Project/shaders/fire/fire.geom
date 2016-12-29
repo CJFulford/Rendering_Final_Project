@@ -8,14 +8,15 @@ uniform mat4 projection;
 
 in vec3 vert[];
 in vec3 vel[];
+in float UV[];
 
 out vec3 vertex;
-out vec3 col;
+out vec3 UVS;
 
 const float PI = 3.14159265359,
 			scale = 0.3f,
 			numOfSlices = 8.f, // if update, change max verticies. so = 18 * numOSlices
-			err = 0.f;
+			err = 0.0001f;
 
 
 //Rodrigues' rotation formula
@@ -32,7 +33,8 @@ void main (void)
 	// http://http.developer.nvidia.com/GPUGems/gpugems_ch39.html
 	// https://stackoverflow.com/questions/23472048/projecting-3d-points-to-2d-plane
 	
-	vec3 cube[8];
+	vec3 	cube[8],
+			uvs[8];
 	int count = 0;
 
 	// for each of the 2 vertices that enter this program (lines provide 2 verticies per input), find the 8 corners of the fire volume they define
@@ -41,25 +43,37 @@ void main (void)
 		vertex = vert[i];
 		vec4 perp, perpRot;
 
-		if (vel[i].z > err || vel[i].z < -err)
+		if (vel[i].z != 0.f)
 		{
-			perp = normalize(vec4(1.f, 0.f, -vel[i].x / vel[i].z, 0.f)) * scale;
-			perpRot = normalize(vec4(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f), 0.f)) * scale;
+			perp = vec4(1.f, 0.f, vel[i].x / vel[i].z, 0.f);
+			perpRot = vec4(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f), 0.f);
 		}
-		else if (vel[i].y > err || vel[i].y < -err)
+		else if (vel[i].y != 0)
 		{
-			perp = normalize(vec4(1.f, -vel[i].x / vel[i].y, 0.f, 0.f)) * scale;
-			perpRot = normalize(vec4(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f), 0.f)) * scale;
+			perp = vec4(1.f, vel[i].x / vel[i].y, 0.f, 0.f);
+			perpRot = vec4(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f), 0.f);
 		}
 		else 
 		{
-			perp = vec4(1.f, 0.f, 0.f, 0.f) * scale;
-			perpRot = vec4(0.f, 0.f, 1.f, 0.f) * scale;
+			perp = vec4(1.f, 0.f, 0.f, 0.f);
+			perpRot = vec4(0.f, 0.f, 1.f, 0.f);
 		}
-		cube[count] = (modelview * (gl_in[i].gl_Position + perpRot)).xyz;	count++;
-		cube[count] = (modelview * (gl_in[i].gl_Position + perp)).xyz; 		count++;
-		cube[count] = (modelview * (gl_in[i].gl_Position - perpRot)).xyz; 	count++;
-		cube[count] = (modelview * (gl_in[i].gl_Position - perp)).xyz;		count++;
+		
+		perp = normalize(perp) * scale;
+		perpRot = normalize(perpRot) * scale;
+		
+		cube[count] = (modelview * (gl_in[i].gl_Position + perpRot)).xyz;
+		uvs[count] = vec3(0.f, UV[i], 1.f);
+		count++;
+		cube[count] = (modelview * (gl_in[i].gl_Position + perp)).xyz; 	
+		uvs[count] = vec3(1.f, UV[i], 0.f);	
+		count++;
+		cube[count] = (modelview * (gl_in[i].gl_Position - perpRot)).xyz; 
+		uvs[count] = vec3(0.f, UV[i], -1.f);	
+		count++;
+		cube[count] = (modelview * (gl_in[i].gl_Position - perp)).xyz;	
+		uvs[count] = vec3(-1.f, UV[i], 0.f);	
+		count++;
 	}
 	
 	int		minI = 0, 
@@ -90,9 +104,9 @@ void main (void)
 		ivec2(6,7)
 	};
 	
-	
-	vec3 planeNormal = vec3(0.f, 0.f, 0.f);
-	for (int i = 0; i < 8; i++)
+	// plane normal points from camera to center of cube
+	vec3 planeNormal = cube[0];
+	for (int i = 1; i < 8; i++)
 		planeNormal += cube[i];
 	planeNormal = normalize(planeNormal / 8.f);
 	
@@ -103,7 +117,8 @@ void main (void)
 		planePoint += planeNormal * ((maxZ - minZ) / numOfSlices) // normal points from camera to cube so add since we are walking from min distance to max distance
 		)
 	{
-		vec3 points[6];	// list of points intersecting plane. max intersections = 6
+		vec3 	points[6],	// list of points intersecting plane. max intersections = 6
+				interprededUVs[6];
 		int c = 0; 	// counts entries in points. used for indexing
 		// check each edge for intersection wiht the plane
 		for (int edge = 0; edge < edges.length(); edge++)
@@ -112,18 +127,20 @@ void main (void)
 			vec3 origin = cube[edges[edge].x];
 			vec3 direction = normalize(cube[edges[edge].x] - cube[edges[edge].y]);
 			
-			// line plane intersection equation found on wikipedia
-			// since both vectors are normalized, there should be no errors
+			
 			float denominator = dot(direction, planeNormal);
 			float numerator = dot(planePoint - origin, planeNormal);
-			if (denominator == 0.f && numerator == 0.f) // true if edge is parallel and contained in plane
+			if (denominator < err && denominator > -err && 
+				numerator < err && numerator > -err) // true if edge is parallel and contained in plane
 			{
+				// isolated, produced 0 results with err of 0.000001f
+				// first significant results at err = 0.01
 				points[c] = cube[edges[edge].x];
 				c++;
 				points[c] = cube[edges[edge].y];
 				c++;
 			}
-			else	
+			else if (denominator > err || denominator < -err)
 			{
 				// ray will intersect the plane
 				// however we are dealing with a non infinite edge.
@@ -141,17 +158,25 @@ void main (void)
 				// account for points being on the plane first
 				if (angle1 < err && angle1 > -err)		// first point is on the plane
 				{
+					// isolated, produced 0 results with error of 0.000001f
+					// first significant results produced at err = 0.1
+					// some results at 0.01
 					points[c] = cube[edges[edge].x];
 					c++;
 				}
 				else if (angle2 < err && angle2 > -err)	// second point is on the plane, else if b/c both cannot be on the plane
 				{
+					// isolated, produced 0 results with error of 0.000001f
+					// some results at 0.01
+					// significant results 0.1
 					points[c] = cube[edges[edge].y];
 					c++;
 				}
 				else if ((angle1 > err && angle2 < -err) ||	// point 1 = front, point 2 = back
 						 (angle1 < -err && angle2 > err))	// point 1 = back, point 2 = front	
 				{
+					// produces all results with error of 0.000001f, no errors
+					// start losing triangles at 0.01
 					points[c] = origin + ((numerator / denominator) * direction);
 					c++;
 				}
@@ -159,55 +184,17 @@ void main (void)
 		}
 		// at this point, points[] contains all of the intersection points between the plane and the edges
 
-		
-		
-		
-		
-		// find center point by averaging the intersection points
-		vec3 midPoint = points[0];
-		for (int i = 1; i < c; i++)
-			midPoint += points[i];
-		midPoint / c;
-		
-		
-		
-		
-		
-		
-		// find 2 points on the plane that are perpendicular to the plane normal and to each other to form2 basis vectors
-		vec3 planeX, planeY;
-		if (planeNormal.z > err || planeNormal.z < -err)
-		{
-			planeX = normalize(vec3(1.f, 0.f, -planeNormal.x / planeNormal.z));
-			planeY = normalize(rotAny(planeX.xyz, normalize(planeNormal), PI / 2.f));
-		}
-		else if (planeNormal.y > err || planeNormal.y < -err)
-		{
-			planeX = normalize(vec3(1.f, -planeNormal.x / planeNormal.y, 0.f));
-			planeY = normalize(rotAny(planeX.xyz, normalize(planeNormal), PI / 2.f));
-		}
-		else 
-		{
-			planeX = normalize(vec3(0.f, 0.f, 1.f));
-			planeY = normalize(vec3(1.f, 0.f, 0.f));
-		}
-		
-		// project the intersection points onto the plane defined by planeX and planeY with normal of planeNormal and origin of midpoint
-		vec2 planeCoords[6];
-		for (int i = 0; i < c; i++)
-			planeCoords[i] = vec2(	dot(planeX, points[i] - midPoint), dot(planeY, points[i] - midPoint));
-		
-		
-		
-		// sort the points by angle relative to the midpoint and the coordinate bases defined by planeX and planeY
-		vec3 sortedPoints[6];		
+		vec3	sortedPoints[6],
+				sortedUVS[6];
+
+
 		for (int i = 0; i < c; i++)
 		{
-			float minAngle = atan(planeCoords[i].y, planeCoords[i].x);
+			float minAngle = atan(points[i].x, points[i].y);
 			int minIndex = i;
 			for (int j = i + 1; j < c; j++)
 			{
-				float angle = atan(planeCoords[j].y, planeCoords[j].x);
+				float angle = atan(points[j].x, points[j].y);
 				if (angle < minAngle)
 				{
 					minAngle = angle;
@@ -215,13 +202,10 @@ void main (void)
 				}
 			}
 			sortedPoints[i] = points[minIndex];
-			vec2 tempCoor = planeCoords[i];
-			planeCoords[i] = planeCoords[minIndex];
-			planeCoords[minIndex] = tempCoor;
+			vec3 tempCoor = points[i];
+			points[i] = points[minIndex];
+			points[minIndex] = tempCoor;
 		}
-		
-		
-		
 		
 		
 		
@@ -231,22 +215,42 @@ void main (void)
 		if (c < 3) continue;	// if there are less than 3 intersection points, cannot form a triangle. stop
 		else if (c == 3)	// if there are 3 points, just a trianlge and be done with it.
 		{
-			col = vec3(0.f, 0.f, 0.f);
-			gl_Position = projection * vec4(sortedPoints[0], 1.f);	EmitVertex(); 	col +=  sortedPoints[0];
-			gl_Position = projection * vec4(sortedPoints[1], 1.f); 	EmitVertex(); 	col +=  sortedPoints[1];
-			gl_Position = projection * vec4(sortedPoints[2], 1.f); 	EmitVertex(); 	col +=  sortedPoints[2];
-			col /= 3;
+			gl_Position = projection * vec4(sortedPoints[0], 1.f);
+			UVS = sortedUVS[0];
+			vertex = gl_Position.xyz;	
+			EmitVertex();
+			
+			gl_Position = projection * vec4(sortedPoints[1], 1.f); 
+			UVS = sortedUVS[1];
+			vertex = gl_Position.xyz;	
+			EmitVertex();
+			
+			gl_Position = projection * vec4(sortedPoints[2], 1.f);
+			UVS = sortedUVS[2];
+			vertex = gl_Position.xyz; 	
+			EmitVertex();
+			
 			EndPrimitive();
 		}else{
 			// create as many triangles as we need to fill the plane.
 			// needs to loop so final is % c
 			for (int i = 0; i < c; i++)
 			{
-			col = vec3(0.f, 0.f, 0.f);
-				gl_Position = projection * vec4(sortedPoints[i], 1.f);				EmitVertex(); 	col +=  sortedPoints[i];
-				gl_Position = projection * vec4(sortedPoints[(i + 1) % c], 1.f); 	EmitVertex(); 	col +=  sortedPoints[(i + 1) % c];
-				gl_Position = projection * vec4(midPoint, 1.f); 					EmitVertex(); 	col +=  midPoint;
-				col /= 3;
+				gl_Position = projection * vec4(sortedPoints[i], 1.f);
+				UVS = sortedUVS[i];
+				vertex = gl_Position.xyz;			
+				EmitVertex();
+				
+				gl_Position = projection * vec4(sortedPoints[(i + 1) % c], 1.f);
+				UVS = sortedUVS[i];
+				vertex = gl_Position.xyz;	
+				EmitVertex();
+				 	
+				gl_Position = projection * vec4(planePoint, 1.f);
+				UVS = sortedUVS[i];
+				vertex = vec3(0.f, 1.f, 0.f);
+				EmitVertex();
+				
 				EndPrimitive();
 			}
 		}
