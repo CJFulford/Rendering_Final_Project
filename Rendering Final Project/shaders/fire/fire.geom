@@ -13,7 +13,7 @@ out vec3 vertex;
 out vec3 col;
 
 const float PI = 3.14159265359,
-			scale = 0.4f,
+			scale = 0.3f,
 			numOfSlices = 8.f, // if update, change max verticies. so = 18 * numOSlices
 			err = 0.f;
 
@@ -73,7 +73,7 @@ void main (void)
 			maxI = 0;
 	float	minZ = cube[0].z, 
 			maxZ = cube[0].z;
-	// cube[0] is auto assigned so it does not need to be checked
+	// cube[0] is auto assigned so it is starting min by default
 	for (int i = 1; i < 8; i++)
 	{
 		if (cube[i].z < minZ){minZ = cube[i].z; minI = i;}
@@ -188,7 +188,7 @@ void main (void)
 		
 		
 		
-		// find 2 points on the plane that aare perpendicular to the plane normal and to each other to form2 basis vectors
+		// find 2 points on the plane that are perpendicular to the plane normal and to each other to form2 basis vectors
 		vec3 planeX, planeY;
 		if (planeNormal.z > err || planeNormal.z < -err)
 		{
@@ -206,16 +206,10 @@ void main (void)
 			planeY = normalize(vec3(1.f, 0.f, 0.f));
 		}
 		
-		
-		
-		
-		
-		
 		// project the intersection points onto the plane defined by planeX and planeY with normal of planeNormal and origin of midpoint
 		vec2 planeCoords[6];
 		for (int i = 0; i < c; i++)
-			planeCoords[i] = vec2(	dot(planeX, midPoint - points[i]),
-									dot(planeY, midPoint - points[i]));
+			planeCoords[i] = vec2(	dot(planeX, points[i] - midPoint), dot(planeY, points[i] - midPoint));
 		
 		
 		

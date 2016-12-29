@@ -49,26 +49,13 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 
 void SceneShader::createFireVertexBuffer()
 {
-	// 10
-	vec3 controlPoints[] =
-	{ 
-		vec3(0.f, 0.f, 0.f),
-		vec3(0.05f, 0.1f, 0.f),
-		vec3(0.1f, 0.2f, 0.f),
-		vec3(0.15f, 0.35f, 0.f),
-		vec3(0.2f, 0.4f, 0.f),
-		vec3(0.3f, 0.425f, 0.f),
-		vec3(0.35f, 0.45f, 0.f),
-		vec3(0.4f, 0.5f, 0.f),
-		vec3(0.45f, 0.6f, 0.f),
-		vec3(0.5f, 0.7f, 0.f) 
-	};
+	
 
 	vec3 fireBase(0.f, 0.0f, 0.f);
 	vec3 fireTop(0.f, 0.6f, 0.f);
 
 
-	const int	totalControlPoints	= sizeof(controlPoints) / sizeof(controlPoints[0]),	// desired nmumber of control points
+	const int	totalControlPoints	= 10,	// desired nmumber of control points
 				n					= totalControlPoints,
 				degree				= 3,			// 3rd degree curve (why not?)
 				numOfKnots			= (totalControlPoints - 1) + degree + 2;	// number of knot values
@@ -77,9 +64,25 @@ void SceneShader::createFireVertexBuffer()
 
 	#define line
 	#ifdef line
+		vec3 controlPoints[totalControlPoints];
 		float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
 		for (int i = 1; i < totalControlPoints; i++)
 			controlPoints[i] = fireBase + (float)i * controlPointStep * fireTop;
+	#endif
+	#ifndef line
+		vec3 controlPoints[totalControlPoints] =
+		{
+			vec3(0.f, 0.f, 0.f),
+			vec3(0.05f, 0.1f, 0.f),
+			vec3(0.1f, 0.2f, 0.f),
+			vec3(0.15f, 0.35f, 0.f),
+			vec3(0.2f, 0.4f, 0.f),
+			vec3(0.3f, 0.425f, 0.f),
+			vec3(0.35f, 0.45f, 0.f),
+			vec3(0.4f, 0.5f, 0.f),
+			vec3(0.45f, 0.6f, 0.f),
+			vec3(0.5f, 0.7f, 0.f)
+		};
 	#endif
 	
 	// generate the knot points. the if an the else keep the spline closed. Knot spacing is uniform, [0,1]
@@ -94,10 +97,7 @@ void SceneShader::createFireVertexBuffer()
 		if (i <= degree)
 			knots[i] = 0.f; 
 		else if (i < n)
-		{
 			knots[i] = (float)(i - degree) / (float)(n - degree);
-			if (knots[i] < err) knots[i] = 0.f;
-		}
 		else
 			knots[i] = 1.f;
 	}
@@ -144,19 +144,6 @@ void SceneShader::createFireVertexBuffer()
 
 	glBindVertexArray(0);
 
-
-	// fuck you code. do it until you do it right
-	/*
-		      __    
-		     |  |
-			 |  |
-		   __|  |_____
-		  |  |  |  |  |
-		  |  |  |  |  |
-		  |           |
-		   \         /
-		    \_______/
-	*/
 	bool redo = false;
 	for (int i = 0; i < numOfKnots; i++)
 		if (isnan(C[i].x) || isnan(C[i].y) || isnan(C[i].z))
