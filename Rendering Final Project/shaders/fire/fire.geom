@@ -167,9 +167,7 @@ void main (void)
 		vec3 midPoint = points[0];
 		for (int i = 1; i < c; i++)
 			midPoint += points[i];
-		
-		float ct = c;	// for division by a float
-		midPoint / ct;
+		midPoint / c;
 		
 		
 		
