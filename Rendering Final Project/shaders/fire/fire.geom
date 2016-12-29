@@ -26,13 +26,6 @@ vec3 rotAny (vec3 vector, vec3 axis, float angle)
 				(axis * dot(axis, vector) * (1.f - cos(angle))));
 }
 
-float distance(vec3 v1, vec3 v2)
-{
-	return sqrt(((v1.x - v2.x) * (v1.x - v2.x)) +
-				((v1.y - v2.y) * (v1.y - v2.y)) +
-				((v1.z - v2.z) * (v1.z - v2.z)));
-}
-
 
 void main (void)
 {
@@ -50,18 +43,18 @@ void main (void)
 
 		if (vel[i].z > err || vel[i].z < -err)
 		{
-			perp = vec4(normalize(vec3(1.f, 0.f, -vel[i].x / vel[i].z)), 0.f) * scale;
-			perpRot = vec4(normalize(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f)), 0.f) * scale;
+			perp = normalize(vec4(1.f, 0.f, -vel[i].x / vel[i].z, 0.f)) * scale;
+			perpRot = normalize(vec4(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f), 0.f)) * scale;
 		}
 		else if (vel[i].y > err || vel[i].y < -err)
 		{
-			perp = vec4(normalize(vec3(1.f, -vel[i].x / vel[i].y, 0.f)), 0.f) * scale;
-			perpRot = vec4(normalize(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f)), 0.f) * scale;
+			perp = normalize(vec4(1.f, -vel[i].x / vel[i].y, 0.f, 0.f)) * scale;
+			perpRot = normalize(vec4(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f), 0.f)) * scale;
 		}
 		else 
 		{
-			perp = vec4(normalize(vec3(1.f, 0.f, 0.f)), 0.f) * scale;
-			perpRot = vec4(normalize(vec3(0.f, 0.f, 1.f)), 0.f) * scale;
+			perp = vec4(1.f, 0.f, 0.f, 0.f) * scale;
+			perpRot = vec4(0.f, 0.f, 1.f, 0.f) * scale;
 		}
 		cube[count] = (modelview * (gl_in[i].gl_Position + perpRot)).xyz;	count++;
 		cube[count] = (modelview * (gl_in[i].gl_Position + perp)).xyz; 		count++;
@@ -80,8 +73,8 @@ void main (void)
 		if (cube[i].z > maxZ){maxZ = cube[i].z; maxI = i;}
 	}
 
-	// indicies in cube array that define all edges in volume
-	ivec2 edges[] = 
+	// indicies in cube array that define all edges in the cube
+	ivec2 edges[12] = 
 	{	
 		ivec2(0,1),
 		ivec2(0,3),
@@ -146,30 +139,25 @@ void main (void)
 				float angle2 = dot(planePoint - cube[edges[edge].y], planeNormal);
 				
 				// account for points being on the plane first
-				if (angle1 > -err && angle1 < err)		// first point is on the plane
+				if (angle1 < err && angle1 > -err)		// first point is on the plane
 				{
 					points[c] = cube[edges[edge].x];
 					c++;
 				}
-				else if (angle2 > -err && angle2 < err)	// second point is on the plane, else if b/c both cannot be on the plane
+				else if (angle2 < err && angle2 > -err)	// second point is on the plane, else if b/c both cannot be on the plane
 				{
 					points[c] = cube[edges[edge].y];
 					c++;
 				}
-				else									// neither point lies on the plane
+				else if ((angle1 > err && angle2 < -err) ||	// point 1 = front, point 2 = back
+						 (angle1 < -err && angle2 > err))	// point 1 = back, point 2 = front	
 				{
-					if ((angle1 >  err && angle2 < -err) ||	// point 1 = front, point 2 = back
-						(angle1 < -err && angle2 >  err))	// point 1 = back, point 2 = front	
-					{
-						float scalar = numerator / denominator;
-						points[c] = origin + (scalar * direction);
-						c++;
-					}
-					// else no intersection
+					points[c] = origin + ((numerator / denominator) * direction);
+					c++;
 				}
-			}
+			}// else no intersection
 		}
-		// at this point, points[] contains all of the intersection points between the plane and the volume
+		// at this point, points[] contains all of the intersection points between the plane and the edges
 
 		
 		

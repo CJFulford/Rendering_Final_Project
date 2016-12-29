@@ -65,8 +65,8 @@ void motion(GLFWwindow* w, double x, double y)
 	{
 		rotate_x += (float)(dy * 0.5f);
 		rotate_y += (float)(dx * 0.5f);
-		if (rotate_x < minRotate) rotate_x = minRotate;
-		else if (rotate_x > maxRotate) rotate_x = maxRotate;
+		//if (rotate_x < minRotate) rotate_x = minRotate;
+		//else if (rotate_x > maxRotate) rotate_x = maxRotate;
 	}
 	mouse_old_x = x;
 	mouse_old_y = y;
@@ -78,7 +78,7 @@ void scroll(GLFWwindow* w, double x, double y)
 	dy = (x - y);
 	translate_z += (float) (dy * 0.03f);
 	if (translate_z < minZoom) translate_z = minZoom;
-	else if (translate_z > maxZoom) translate_z = maxZoom;
+	//else if (translate_z > maxZoom) translate_z = maxZoom;
 }
 
 void render()

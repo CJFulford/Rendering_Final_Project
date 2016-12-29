@@ -88,9 +88,9 @@ void SceneShader::render()
 	modelview *= rotationY;
 
 	renderFire();
-	renderFloor();
-	renderLogs();
-	renderSkybox();
+	//renderFloor();
+	//renderLogs();
+	//renderSkybox();
 	
 	time += 0.003f;
 }
