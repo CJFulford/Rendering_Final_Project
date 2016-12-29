@@ -64,8 +64,8 @@ void SceneShader::createFireVertexBuffer()
 		vec3(0.5f, 0.7f, 0.f) 
 	};
 
-	vec3 fireBase(0.f, 0.f, 0.f);
-	vec3 fireTop(0.f, 0.7f, 0.f);
+	vec3 fireBase(0.f, 0.0f, 0.f);
+	vec3 fireTop(0.f, 0.6f, 0.f);
 
 
 	const int	totalControlPoints	= sizeof(controlPoints) / sizeof(controlPoints[0]),	// desired nmumber of control points

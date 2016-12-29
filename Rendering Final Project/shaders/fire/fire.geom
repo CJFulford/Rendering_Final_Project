@@ -98,7 +98,12 @@ void main (void)
 	};
 	
 	
-	vec3 planeNormal = normalize(cube[maxI]);
+	vec3 planeNormal = vec3(0.f, 0.f, 0.f);
+	for (int i = 0; i < 8; i++)
+		planeNormal += cube[i];
+	planeNormal /= 8.f;
+	
+	
 	for (	
 		vec3 planePoint = cube[maxI];
 		planePoint.z > minZ;  
