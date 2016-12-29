@@ -21,8 +21,8 @@
 #include <cstdio>
 
 const float PI = 3.14159265359f;
-const float PI2 = 2f * PI;
-const float PIo2 = PI / 2f;
+const float PI2 = 2.f * PI;
+const float PIo2 = PI / 2.f;
 const float err = 0.0001f;
 const glm::mat4 identity(1.0f);
 
@@ -86,10 +86,9 @@ private:
 
 	GLuint fireVertexArray;
 	GLuint fireVertexBuffer;
-	GLuint fireNormalBuffer;
 	GLuint fireVelocityBuffer;
 
-	int fireGeneratedPoints = 14;
+	int fireGeneratedPoints = 0;
 
 	GLuint skyboxVertexArray;
 	GLuint skyboxVertexBuffer;

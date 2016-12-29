@@ -14,11 +14,8 @@ void SceneShader::renderFire()
 	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
 	passBasicUniforms(&fireProgram);
 
-	glUniform3fv(glGetUniformLocation(fireProgram, "cam"), 3, value_ptr(cam * zTranslation));
-
+	//glDrawArrays(GL_LINES, 0, fireGeneratedPoints);
 	glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
-	//glDrawArrays(GL_POINTS, 0, fireGeneratedPoints); 
-	//glPointSize(30.f);
 
 	texture.unbind2DTexture();
 	glDisable(GL_BLEND);
@@ -29,8 +26,6 @@ void SceneShader::renderLogs()
 {
 	glBindVertexArray(logsVertexArray);
 	glUseProgram(logsProgram);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	texture.bind2DTexture(logsProgram, logsTexture, std::string("image"));
 	passBasicUniforms(&logsProgram);
@@ -39,7 +34,6 @@ void SceneShader::renderLogs()
 
 	glDrawElements(GL_TRIANGLES, logsMesh->faces.size() * 3, GL_UNSIGNED_INT, 0);
 	texture.unbind2DTexture();
-	glDisable(GL_BLEND);
 	glBindVertexArray(0);
 }
 
@@ -47,15 +41,12 @@ void SceneShader::renderSkybox()
 {
 	glBindVertexArray(skyboxVertexArray);
 	glUseProgram(skyboxProgram);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	texture.bind2DTexture(skyboxProgram, skyboxTexture, std::string("image"));
 	passBasicUniforms(&skyboxProgram);
 
 	glDrawElements(GL_TRIANGLES, skyboxMesh->faces.size() * 3, GL_UNSIGNED_INT, 0);
 	texture.unbind2DTexture();
-	glDisable(GL_BLEND);
 	glBindVertexArray(0);
 }
 
@@ -66,8 +57,6 @@ void SceneShader::renderFloor()
 
 	texture.bind2DTexture(floorProgram, floorTexture, std::string("image"));
 	passBasicUniforms(&floorProgram);
-
-	glUniform1f(glGetUniformLocation(logsProgram, "time"), time);
 
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	texture.unbind2DTexture();
@@ -135,7 +124,6 @@ void SceneShader::shutdown()
 {
 	glDeleteBuffers(1, &fireVertexBuffer);
 	glDeleteBuffers(1, &fireVelocityBuffer);
-	glDeleteBuffers(1, &fireNormalBuffer);
 	glDeleteVertexArrays(1, &fireVertexArray);
 
 	glDeleteBuffers(1, &logsVertexBuffer);

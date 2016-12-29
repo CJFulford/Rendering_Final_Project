@@ -186,7 +186,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\Black_and_White_grid.png">
+    <Image Include="textures\dirt.png">
+      <Filter>Source Files\textures</Filter>
+    </Image>
+    <Image Include="textures\embers.png">
+      <Filter>Source Files\textures</Filter>
+    </Image>
+    <Image Include="textures\fire_profile_texture.png">
+      <Filter>Source Files\textures</Filter>
+    </Image>
+    <Image Include="textures\skybox.png">
       <Filter>Source Files\textures</Filter>
     </Image>
   </ItemGroup>

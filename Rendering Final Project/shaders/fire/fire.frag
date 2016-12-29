@@ -5,6 +5,7 @@ out vec4 color;
 uniform sampler2D image;
 
 in vec3 vertex;
+in vec3 col;
 
 void main (void)
 {
@@ -16,5 +17,6 @@ void main (void)
 	uv.x = sqrt((vertex.x * vertex.x) + (vertex.y * vertex.y));
 	uv.y = vertex.z;
 
-	color = vec4(1.f, 0.f, 0.f, 1.f); // just leave as green for default
+	//color = texture(image, uv); // just leave as green for default
+	color = vec4(col, 1.f);
 }

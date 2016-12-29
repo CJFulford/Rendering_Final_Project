@@ -210,7 +210,10 @@
     <ClCompile Include="texture\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\Black_and_White_grid.png" />
+    <Image Include="textures\dirt.png" />
+    <Image Include="textures\embers.png" />
+    <Image Include="textures\fire_profile_texture.png" />
+    <Image Include="textures\skybox.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
