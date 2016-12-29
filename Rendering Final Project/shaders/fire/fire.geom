@@ -109,7 +109,7 @@ void main (void)
 		int c = 0; 	// counts entries in points. used for indexing
 		// check each edge for intersection wiht the plane
 		for (int edge = 0; edge < edges.length(); edge++)
-		{
+		{	
 			// convert the edge into a vector
 			vec3 origin = cube[edges[edge].x];
 			vec3 direction = normalize(cube[edges[edge].x] - cube[edges[edge].y]);
@@ -118,7 +118,7 @@ void main (void)
 			// since both vectors are normalized, there should be no errors
 			float denominator = dot(direction, planeNormal);
 			float numerator = dot(planePoint - origin, planeNormal);
-			if (denominator < err && denominator > -err && numerator < err && denominator > -err) // true if edge is parallel and contained in plane
+			if (denominator == 0.f && numerator == 0.f) // true if edge is parallel and contained in plane
 			{
 				points[c] = cube[edges[edge].x];
 				c++;
@@ -174,7 +174,10 @@ void main (void)
 		vec3 midPoint = points[0];
 		for (int i = 1; i < c; i++)
 			midPoint += points[i];
-		midPoint / c;
+		
+		float ct = c;	// for division by a float
+		midPoint / ct;
+		
 		
 		
 		
@@ -244,9 +247,9 @@ void main (void)
 		else if (c == 3)	// if there are 3 points, just a trianlge and be done with it.
 		{
 			col = vec3(0.f, 0.f, 0.f);
-			gl_Position = projection * vec4(sortedPoints[0], 1.f);	EmitVertex(); col +=  sortedPoints[0];
-			gl_Position = projection * vec4(sortedPoints[1], 1.f); 	EmitVertex(); col +=  sortedPoints[1];
-			gl_Position = projection * vec4(sortedPoints[2], 1.f); 	EmitVertex(); col +=  sortedPoints[2];
+			gl_Position = projection * vec4(sortedPoints[0], 1.f);	EmitVertex(); 	col +=  sortedPoints[0];
+			gl_Position = projection * vec4(sortedPoints[1], 1.f); 	EmitVertex(); 	col +=  sortedPoints[1];
+			gl_Position = projection * vec4(sortedPoints[2], 1.f); 	EmitVertex(); 	col +=  sortedPoints[2];
 			col /= 3;
 			EndPrimitive();
 		}else{
@@ -255,9 +258,9 @@ void main (void)
 			for (int i = 0; i < c; i++)
 			{
 			col = vec3(0.f, 0.f, 0.f);
-				gl_Position = projection * vec4(sortedPoints[i], 1.f);				EmitVertex(); col +=  sortedPoints[i];
-				gl_Position = projection * vec4(sortedPoints[(i + 1) % c], 1.f); 	EmitVertex(); col +=  sortedPoints[(i + 1) % c];
-				gl_Position = projection * vec4(midPoint, 1.f); 					EmitVertex(); col +=  midPoint;
+				gl_Position = projection * vec4(sortedPoints[i], 1.f);				EmitVertex(); 	col +=  sortedPoints[i];
+				gl_Position = projection * vec4(sortedPoints[(i + 1) % c], 1.f); 	EmitVertex(); 	col +=  sortedPoints[(i + 1) % c];
+				gl_Position = projection * vec4(midPoint, 1.f); 					EmitVertex(); 	col +=  midPoint;
 				col /= 3;
 				EndPrimitive();
 			}
