@@ -22,6 +22,7 @@ vec3 rotAny (vec3 vector, vec3 axis, float angle)
 				(cross(axis, vector) * sin(angle)) + 
 				(axis * dot(axis, vector) * (1.f - cos(angle))));
 }
+mat3 rotateY(float a){return mat3(cos(a), 0.f, sin(a), 0.f, 1.f, 0.f, -sin(a), 0.f, cos(a));}
 
 
 void main (void)
@@ -38,41 +39,44 @@ void main (void)
 	// uvGeom is in here so to coordinate the link between teh corner positions an the texture coordinates
 	for (int i = 0; i < gl_in.length(); i++)
 	{
-		vec4 perp, perpRot;
+		vec3 perp, perpRot;
 
 		if (vel[i].z > err || vel[i].z < -err)
 		{
-			perp = vec4(1.f, 0.f, vel[i].x / vel[i].z, 0.f);
-			perpRot = vec4(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f), 0.f);
+			perp = vec3(1.f, 0.f, vel[i].x / vel[i].z);
+			perpRot = rotAny(perp.xyz, normalize(vel[i]), PI / 2.f);
 		}
 		else if (vel[i].y > err || vel[i].y < -err)
 		{
-			perp = vec4(1.f, vel[i].x / vel[i].y, 0.f, 0.f);
-			perpRot = vec4(rotAny(perp.xyz, normalize(vel[i]), PI / 2.f), 0.f);
+			perp = vec3(1.f, vel[i].x / vel[i].y, 0.f);
+			perpRot = rotAny(perp.xyz, normalize(vel[i]), PI / 2.f);
 		}
 		else 
 		{
-			perp = vec4(1.f, 0.f, 0.f, 0.f);
-			perpRot = vec4(0.f, 0.f, 1.f, 0.f);
+			perp = vec3(1.f, 0.f, 0.f);
+			perpRot = vec3(0.f, 0.f, 1.f);
 		}
 		
-		perp = normalize(perp) * scale;
-		perpRot = normalize(perpRot) * scale;
+		perp = rotateY(PI / 4.f) * perp;
+		perpRot = rotateY(PI / 4.f) * perpRot;
 		
-		cube[count] = (modelview * (gl_in[i].gl_Position + perpRot)).xyz;
-		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f);
+		vec4 perp4 = vec4(normalize(perp) * scale, 0.f);
+		vec4 perpRot4 = vec4(normalize(perpRot) * scale, 0.f);
+		
+		cube[count] = (modelview * (gl_in[i].gl_Position + perpRot4)).xyz;
+		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f) + perpRot4.xyz;
 		count++;
 		
-		cube[count] = (modelview * (gl_in[i].gl_Position + perp)).xyz; 	
-		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f);	
+		cube[count] = (modelview * (gl_in[i].gl_Position + perp4)).xyz; 	
+		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f) + perp4.xyz;	
 		count++;
 		
-		cube[count] = (modelview * (gl_in[i].gl_Position - perpRot)).xyz; 
-		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f);	
+		cube[count] = (modelview * (gl_in[i].gl_Position - perpRot4)).xyz; 
+		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f) - perpRot4.xyz;	
 		count++;
 		
-		cube[count] = (modelview * (gl_in[i].gl_Position - perp)).xyz;	
-		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f);	
+		cube[count] = (modelview * (gl_in[i].gl_Position - perp4)).xyz;	
+		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f) - perp.xyz;	
 		count++;
 	}
 	
@@ -113,7 +117,7 @@ void main (void)
 	for (	
 		vec3 planePoint = cube[maxI];
 		planePoint.z > minZ;  
-		planePoint += planeNormal * ((maxZ - minZ) / (numOfSlices * 2.f)) // normal points from camera to cube so add since we are walking from min distance to max distance
+		planePoint += planeNormal * ((maxZ - minZ) / numOfSlices) // normal points from camera to cube so add since we are walking from min distance to max distance
 		)
 	{
 		// list of points intersecting plane. max intersections = 6, need uvGeom to stay linked to coordinate

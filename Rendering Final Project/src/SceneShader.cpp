@@ -2,7 +2,7 @@
 
 float time = 0.f;
 vec3 lightPosition = vec3(0.2f, 0.2f, 0.f);
-vec3 cam(0.f, 0.3f, 2.f);
+vec3 cam(0.f, 0.5f, 2.f);
 
 void SceneShader::renderFire()
 {
@@ -81,7 +81,7 @@ SceneShader::SceneShader() : Shader()
 void SceneShader::render()
 {
 	projection = perspective(45.0f, aspectRatio, 0.01f, 100.0f);
-	vec3 center(0.f, 0.4f, 0.f);
+	vec3 center(0.f, 0.3f, 0.f);
 	vec3 up(0.f, 1.f, 0.f);
 	modelview = lookAt(cam * zTranslation, center, up);
 

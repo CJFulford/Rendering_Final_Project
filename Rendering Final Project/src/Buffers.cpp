@@ -72,7 +72,7 @@ void SceneShader::createFireVertexBuffer()
 	// C[i] is there so thatwe can skip some loops in the next for loop
 	for (int i = 0; i < numOfKnots; i++)
 	{
-		UV[i] = ((float)i) / ((float)numOfKnots - 1); // give thy Y value for the UV coordinates
+		UV[i] = (float)i / (float)numOfKnots; // give thy Y value for the UV coordinates
 
 		if (i <= degree)
 			knots[i] = 0.f;

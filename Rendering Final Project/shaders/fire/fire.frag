@@ -34,7 +34,7 @@ float pNoise(vec2 p, int res){
     float persistance = .5;
     float n = 0.;
     float normK = 0.;
-    float f = 4.;
+    float f = 1.;
     float amp = 1.;
     int iCount = 0;
     for (int i = 0; i<50; i++){
@@ -80,11 +80,12 @@ void main (void)
 		noisePosition[i] *= noiseScale[i];
 		
 	for (float i = 0.f; i < octaves; i++)
-		turb += pow(gain, i) * noise1(noisePosition * pow(lacunarity, i));
+		turb += pow(gain, i) * pNoise(noisePosition.zw, 50);
 
-	float u = sqrt((UV.x * UV.x) + (UV.y * UV.y));
-	float v = pNoise(vec2(t, -t),50);
-	color = vec4(texture(image, vec2(u, v)).xyz, 1.f / 2.f);	// dont know why but the UV in the book appear to be backwards
+	float u = sqrt((UV.x * UV.x) + (UV.y * UV.y));	
+	
+	float v = (turb + 1.f) / 2.f;
+	color = vec4(texture(image, vec2(u, v)).xyz, 1.f / 8.f);	// dont know why but the UV in the book appear to be backwards
 }
 
 
