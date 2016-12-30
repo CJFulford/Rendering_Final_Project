@@ -6,8 +6,8 @@ layout(triangle_Strip, max_vertices = 144) out;
 uniform mat4 	modelview, projection;
 in vec3 vert[], vel[];
 in float UVGeomIn[];
-out vec3 	vertex, uvFrag;
-out float slices;
+out vec3 vertex, uvFrag;
+out float radius;
 
 const float PI = 3.14159265359,
 			scale = 0.2f,
@@ -26,7 +26,7 @@ vec3 rotAny (vec3 vector, vec3 axis, float angle)
 
 void main (void)
 {
-	slices = numOfSlices;
+	radius = scale;
 	// Main Article: http://graphics.cs.ucdavis.edu/~hamann/FullerKrishnanMahrousHamannJoyFirePaperFor_I3D2007AsSubmitted11012006.pdf
 	// http://http.developer.nvidia.com/GPUGems/gpugems_ch39.html
 	
@@ -64,11 +64,11 @@ void main (void)
 		count++;
 		
 		cube[count] = (modelview * (gl_in[i].gl_Position + perp)).xyz; 	
-		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f);	
+		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f);	
 		count++;
 		
 		cube[count] = (modelview * (gl_in[i].gl_Position - perpRot)).xyz; 
-		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f);	
+		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f);	
 		count++;
 		
 		cube[count] = (modelview * (gl_in[i].gl_Position - perp)).xyz;	
@@ -113,7 +113,7 @@ void main (void)
 	for (	
 		vec3 planePoint = cube[maxI];
 		planePoint.z > minZ;  
-		planePoint += planeNormal * ((maxZ - minZ) / numOfSlices) // normal points from camera to cube so add since we are walking from min distance to max distance
+		planePoint += planeNormal * ((maxZ - minZ) / (numOfSlices * 2.f)) // normal points from camera to cube so add since we are walking from min distance to max distance
 		)
 	{
 		// list of points intersecting plane. max intersections = 6, need uvGeom to stay linked to coordinate

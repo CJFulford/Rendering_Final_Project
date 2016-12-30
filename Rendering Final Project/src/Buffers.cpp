@@ -49,7 +49,7 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 
 void SceneShader::createFireVertexBuffer()
 {
-	const int	totalControlPoints	= 200,					// desired nmumber of control points
+	const int	totalControlPoints	= 1000,					// desired nmumber of control points
 				n					= totalControlPoints,
 				degree				= 3,					// 3rd degree curve (why not?)
 				numOfKnots			= (totalControlPoints - 1) + degree + 2;	// number of knot values
@@ -61,7 +61,7 @@ void SceneShader::createFireVertexBuffer()
 	#define line
 	#ifdef line
 		vec3 fireBase(0.f, 0.f, 0.f);
-		vec3 fireTop(0.f, 0.5f, 0.f);
+		vec3 fireTop(0.f, 1.f, 0.f);
 		vec3 controlPoints[totalControlPoints];
 		float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
 		for (int i = 1; i < totalControlPoints; i++)
@@ -108,7 +108,7 @@ void SceneShader::createFireVertexBuffer()
 
 	// need this otherwise last points will be 0
 	for (int i = numOfKnots - degree - 1; i < numOfKnots; i++)
-		C[i] = fireTop;
+		C[i] = controlPoints[totalControlPoints - 1];
 
 	
 

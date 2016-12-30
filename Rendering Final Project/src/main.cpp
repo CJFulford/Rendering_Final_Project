@@ -10,7 +10,7 @@ float translate_z = 1.0f;
 #define maxZoom 1.2f
 #define minZoom 0.3f
 #define minRotate 0
-#define maxRotate 90
+#define maxRotate 45
 
 int width = 700;
 int height = width;
@@ -65,8 +65,8 @@ void motion(GLFWwindow* w, double x, double y)
 	{
 		rotate_x += (float)(dy * 0.5f);
 		rotate_y += (float)(dx * 0.5f);
-		//if (rotate_x < minRotate) rotate_x = minRotate;
-		//else if (rotate_x > maxRotate) rotate_x = maxRotate;
+		if (rotate_x < minRotate) rotate_x = minRotate;
+		else if (rotate_x > maxRotate) rotate_x = maxRotate;
 	}
 	mouse_old_x = x;
 	mouse_old_y = y;
