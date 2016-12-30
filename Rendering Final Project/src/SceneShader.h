@@ -36,14 +36,11 @@ public:
 	~SceneShader();
 
 	void startup ();
-	void buildShaders();
 	void shutdown ();
+	void buildShaders();
 	void render();
 
 	void renderFire();
-	void renderLogs();
-	void renderSkybox();
-	void renderFloor();
 
 	void setAspectRatio(float ratio);
 	void setZTranslation(float z);
@@ -57,32 +54,14 @@ private:
 	std::vector<glm::vec2> calculateSphereicalUVCoordinates(trimesh::TriMesh * mesh);
 	std::vector<glm::vec2> calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh);
 
-	void createFloorVertexBuffer();
 	void createFireVertexBuffer();
-	void createLogsVertexBuffer();
-	void createSkyboxVertexBuffer();
 
 	void SceneShader::passBasicUniforms(GLuint *program);
 
 	GLuint loadTexture(std::string file_path);
 
 	// variables
-	GLuint floorProgram;
-	GLuint logsProgram;
-	GLuint skyboxProgram;
 	GLuint fireProgram;
-
-	GLuint floorVertexArray;
-	GLuint floorVertexBuffer;
-	GLuint floorTextureBuffer;
-	GLuint floorTexture;
-
-	GLuint logsVertexArray;
-	GLuint logsVertexBuffer;
-	GLuint logsNormalBuffer;
-	GLuint logsCylUVBuffer;
-	GLuint logsIndicesBuffer;
-	GLuint logsTexture;
 
 	GLuint fireVertexArray;
 	GLuint fireVertexBuffer;
@@ -90,13 +69,6 @@ private:
 	GLuint fireUVBuffer;
 
 	int fireGeneratedPoints = 0;
-
-	GLuint skyboxVertexArray;
-	GLuint skyboxVertexBuffer;
-	GLuint skyboxNormalBuffer;
-	GLuint skyboxCylUVBuffer;
-	GLuint skyboxIndicesBuffer;
-	GLuint skyboxTexture;
 
 	GLuint fireTexture;
 
@@ -109,11 +81,6 @@ private:
 	float aspectRatio;
 
 	Texture texture;
-
-	trimesh::TriMesh* logsMesh;
-	std::vector<unsigned int> logsTriangleIndices;
-	trimesh::TriMesh* skyboxMesh;
-	std::vector<unsigned int> skyboxTriangleIndices;
 };
 
 #endif /* SCENESHADER_H_ */

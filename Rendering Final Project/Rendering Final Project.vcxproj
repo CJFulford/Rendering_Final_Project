@@ -165,18 +165,9 @@
     <ClInclude Include="texture\texture.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="models\Logs.ply" />
-    <None Include="models\skybox.ply" />
     <None Include="shaders\fire\fire.frag" />
     <None Include="shaders\fire\fire.geom" />
     <None Include="shaders\fire\fire.vert" />
-    <None Include="shaders\floor\floor.frag" />
-    <None Include="shaders\floor\floor.vert" />
-    <None Include="shaders\logs\logs.frag" />
-    <None Include="shaders\logs\logs.geom" />
-    <None Include="shaders\logs\logs.vert" />
-    <None Include="shaders\skybox\skybox.frag" />
-    <None Include="shaders\skybox\skybox.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\trimesh2\libsrc\conn_comps.cc" />
@@ -210,10 +201,7 @@
     <ClCompile Include="texture\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\dirt.png" />
-    <Image Include="textures\embers.png" />
     <Image Include="textures\fire_profile_texture.png" />
-    <Image Include="textures\skybox.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

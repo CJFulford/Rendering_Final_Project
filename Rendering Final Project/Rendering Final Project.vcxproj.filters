@@ -16,9 +16,6 @@
     <Filter Include="Source Files\src">
       <UniqueIdentifier>{7fda9298-f7d6-4a40-ae93-b7d4e9a8d9e2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\models">
-      <UniqueIdentifier>{ee7a73af-493e-49dd-973c-f18d1a047748}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\texture">
       <UniqueIdentifier>{f319a075-624e-46c8-80cc-5f4ef733a9dc}</UniqueIdentifier>
     </Filter>
@@ -27,15 +24,6 @@
     </Filter>
     <Filter Include="Source Files\shaders">
       <UniqueIdentifier>{f65b817e-93c4-49c9-b11e-8e6e5c74bec6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\shaders\floor">
-      <UniqueIdentifier>{fbf0dd6b-23ef-4fdf-a84b-74d48cbb608b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\shaders\logs">
-      <UniqueIdentifier>{f2eb17e8-3cc3-4efb-9346-b41a4e053d12}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\shaders\skybox">
-      <UniqueIdentifier>{e8331218-fbe7-46f2-9129-ff7b917d2e16}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\shaders\fire">
       <UniqueIdentifier>{cb26ec75-d7f4-4b38-a514-121f5397f7d7}</UniqueIdentifier>
@@ -59,33 +47,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="models\Logs.ply">
-      <Filter>Source Files\models</Filter>
-    </None>
-    <None Include="models\skybox.ply">
-      <Filter>Source Files\models</Filter>
-    </None>
-    <None Include="shaders\floor\floor.vert">
-      <Filter>Source Files\shaders\floor</Filter>
-    </None>
-    <None Include="shaders\floor\floor.frag">
-      <Filter>Source Files\shaders\floor</Filter>
-    </None>
-    <None Include="shaders\logs\logs.vert">
-      <Filter>Source Files\shaders\logs</Filter>
-    </None>
-    <None Include="shaders\logs\logs.frag">
-      <Filter>Source Files\shaders\logs</Filter>
-    </None>
-    <None Include="shaders\skybox\skybox.frag">
-      <Filter>Source Files\shaders\skybox</Filter>
-    </None>
-    <None Include="shaders\skybox\skybox.vert">
-      <Filter>Source Files\shaders\skybox</Filter>
-    </None>
-    <None Include="shaders\logs\logs.geom">
-      <Filter>Source Files\shaders\logs</Filter>
-    </None>
     <None Include="shaders\fire\fire.frag">
       <Filter>Source Files\shaders\fire</Filter>
     </None>
@@ -186,16 +147,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="textures\dirt.png">
-      <Filter>Source Files\textures</Filter>
-    </Image>
-    <Image Include="textures\embers.png">
-      <Filter>Source Files\textures</Filter>
-    </Image>
     <Image Include="textures\fire_profile_texture.png">
-      <Filter>Source Files\textures</Filter>
-    </Image>
-    <Image Include="textures\skybox.png">
       <Filter>Source Files\textures</Filter>
     </Image>
   </ItemGroup>

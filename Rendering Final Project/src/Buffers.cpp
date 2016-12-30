@@ -1,12 +1,7 @@
 #include "SceneShader.h"
 #include <omp.h>
 
-std::string skyboxTextureFile = "textures/skybox.png";
-std::string floorTextureFile = "textures/dirt.png";
-std::string logsTextureFile = "textures/embers.png";
 std::string fireTextureFile = "textures/fire_profile_texture.png";
-std::string skybox = "./models/skybox.ply";
-std::string logs = "./models/Logs.ply";
 
 void printVec3(vec3 v) { std::cout << v.x << "\t" << v.y << "\t" << v.z << std::endl; }
 //Rodrigues' rotation formula
@@ -136,114 +131,6 @@ void SceneShader::createFireVertexBuffer()
 			break;
 		}
 	if (redo) createFireVertexBuffer();
-}
-
-void SceneShader::createLogsVertexBuffer()
-{
-	logsMesh = readMesh(logs, &logsTriangleIndices);
-	logsTexture = loadTexture(logsTextureFile);
-
-	glGenVertexArrays(1, &logsVertexArray);
-	glBindVertexArray(logsVertexArray);
-
-	glGenBuffers(1, &logsVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, logsVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, logsMesh->vertices.size() * sizeof(trimesh::point), logsMesh->vertices.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(0);
-
-	glGenBuffers(1, &logsNormalBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, logsNormalBuffer);
-	glBufferData(GL_ARRAY_BUFFER, logsMesh->normals.size() * sizeof(trimesh::vec), logsMesh->normals.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(1);
-
-	std::vector<vec2> uvs = calculateCylindricalUVCoordinates(logsMesh);
-
-	glGenBuffers(1, &logsCylUVBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, logsCylUVBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(vec2), uvs.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(2);
-
-	glGenBuffers(1, &logsIndicesBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, logsIndicesBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, logsTriangleIndices.size() * sizeof(unsigned int), logsTriangleIndices.data(), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-}
-
-void SceneShader::createSkyboxVertexBuffer()
-{
-	skyboxMesh = readMesh(skybox, &skyboxTriangleIndices);
-	skyboxTexture = loadTexture(skyboxTextureFile);
-
-	glGenVertexArrays(1, &skyboxVertexArray);
-	glBindVertexArray(skyboxVertexArray);
-
-	glGenBuffers(1, &skyboxVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, skyboxMesh->vertices.size() * sizeof(trimesh::point), skyboxMesh->vertices.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(0);
-
-	glGenBuffers(1, &skyboxNormalBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxNormalBuffer);
-	glBufferData(GL_ARRAY_BUFFER, skyboxMesh->normals.size() * sizeof(trimesh::vec), skyboxMesh->normals.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(1);
-
-	std::vector<vec2> uvs = calculateSphereicalUVCoordinates(skyboxMesh);
-
-	glGenBuffers(1, &skyboxCylUVBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, skyboxCylUVBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(vec2), uvs.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(2);
-
-	glGenBuffers(1, &skyboxIndicesBuffer);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, skyboxIndicesBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, skyboxTriangleIndices.size() * sizeof(unsigned int), skyboxTriangleIndices.data(), GL_STATIC_DRAW);
-
-	glBindVertexArray(0);
-}
-
-void SceneShader::createFloorVertexBuffer()
-{
-	static const GLfloat floorGeometry[] =
-	{
-		-1.0f, 0.0f, -1.0f,
-		-1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, -1.0f,
-		1.0f, 0.0f, 1.0f,
-	};
-	static const GLfloat floorUVS[] =
-	{
-		0.f, 0.f,
-		0.f, 1.f,
-		1.f, 0.f,
-		1.f, 1.f,
-	};
-
-	floorTexture = loadTexture(floorTextureFile);
-
-	glGenVertexArrays(1, &floorVertexArray);
-	glBindVertexArray(floorVertexArray);
-
-	glGenBuffers(1, &floorVertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, floorVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(floorGeometry), floorGeometry, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(0);
-
-	//uvsPlane buffer
-	glGenBuffers(1, &floorTextureBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, floorTextureBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(floorUVS), floorUVS, GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
-	glEnableVertexAttribArray(1);
-
-	glBindVertexArray(0);
 }
 
 GLuint SceneShader::loadTexture(std::string file_path)

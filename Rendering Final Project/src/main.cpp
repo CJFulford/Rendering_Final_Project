@@ -67,6 +67,8 @@ void motion(GLFWwindow* w, double x, double y)
 		rotate_y += (float)(dx * 0.5f);
 		if (rotate_x < minRotate) rotate_x = minRotate;
 		else if (rotate_x > maxRotate) rotate_x = maxRotate;
+		if (rotate_y < -maxRotate) rotate_x = -maxRotate;
+		else if (rotate_y > maxRotate) rotate_x = maxRotate;
 	}
 	mouse_old_x = x;
 	mouse_old_y = y;
