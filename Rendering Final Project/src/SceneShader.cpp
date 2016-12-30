@@ -4,31 +4,6 @@ float time = 0.f;
 vec3 lightPosition = vec3(0.2f, 0.2f, 0.f);
 vec3 cam(0.f, 0.5f, 2.f);
 
-void SceneShader::renderFire()
-{
-	glBindVertexArray(fireVertexArray);
-	glUseProgram(fireProgram);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
-	passBasicUniforms(&fireProgram);
-
-	glUniform1f(glGetUniformLocation(fireProgram, "time"), time);
-
-	int laps = 2;
-
-	for (int i = 0; i < laps; i++)
-	{
-		glUniform1i(glGetUniformLocation(fireProgram, "lap"), i);
-		glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
-	}
-
-	texture.unbind2DTexture();
-	glDisable(GL_BLEND);
-	glBindVertexArray(0);
-}
-
 SceneShader::SceneShader() : Shader()
 {
 	fireProgram = 0;
@@ -50,7 +25,30 @@ void SceneShader::render()
 	mat4 rotationY = rotate(rotationX, yRot  * PI / 180.0f, vec3(0.f, 1.f, 0.f));
 	modelview *= rotationY;
 
-	renderFire();
+	//================================
+	//render the fire
+	glBindVertexArray(fireVertexArray);
+	glUseProgram(fireProgram);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
+	passBasicUniforms(&fireProgram);
+
+	glUniform1f(glGetUniformLocation(fireProgram, "time"), time);
+
+	int laps = 2;
+
+	for (int i = 0; i < laps; i++)
+	{
+		glUniform1i(glGetUniformLocation(fireProgram, "lap"), i);
+		glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
+	}
+
+	texture.unbind2DTexture();
+	glDisable(GL_BLEND);
+	glBindVertexArray(0);
+	//================================
 	
 	time += 0.03f;
 }
@@ -70,19 +68,8 @@ void SceneShader::shutdown()
 	glDeleteVertexArrays(1, &fireVertexArray);
 }
 
-void SceneShader::buildShaders()
-{
-	fireProgram = compile_shaders(	"./shaders/fire.vert",
-									"./shaders/fire.geom",
-									"./shaders/fire.frag");
-}
-
-void SceneShader::startup()
-{
-	buildShaders();
-	createFireVertexBuffer();
-}
-
+void SceneShader::buildShaders() { fireProgram = compile_shaders("./shaders/fire.vert", "./shaders/fire.geom", "./shaders/fire.frag"); }
+void SceneShader::startup() { buildShaders(); createFireVertexBuffer(); }
 void SceneShader::setZTranslation(float z) { zTranslation = z; }
 void SceneShader::setAspectRatio(float ratio) { aspectRatio = ratio; }
 void SceneShader::setRotationX(float x) { xRot = x; }

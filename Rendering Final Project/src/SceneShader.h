@@ -40,8 +40,6 @@ public:
 	void buildShaders();
 	void render();
 
-	void renderFire();
-
 	void setAspectRatio(float ratio);
 	void setZTranslation(float z);
 	void setRotationX(float x );
