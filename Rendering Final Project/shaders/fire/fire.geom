@@ -1,7 +1,7 @@
 #version 430 core
 
 layout(lines) in;
-layout(triangle_Strip, max_vertices = 144) out;
+layout(triangle_Strip, max_vertices = 146) out;
 
 uniform mat4 	modelview, projection;
 in vec3  vel[];
