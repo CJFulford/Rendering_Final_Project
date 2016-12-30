@@ -94,7 +94,7 @@ void SceneShader::render()
 	//renderLogs();
 	//renderSkybox();
 	
-	time += 0.003f;
+	time += 0.03f;
 }
 
 void SceneShader::buildShaders()

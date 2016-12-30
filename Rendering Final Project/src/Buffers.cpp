@@ -1,32 +1,34 @@
 #include "SceneShader.h"
 #include <omp.h>
 
-std::string skyboxTextureFile =		"textures/skybox.png";
-std::string floorTextureFile =		"textures/dirt.png";
-std::string logsTextureFile =		"textures/embers.png";
-std::string fireTextureFile =		"textures/fire_profile_texture.png";
-std::string skybox =	"./models/skybox.ply";
-std::string logs =		"./models/Logs.ply";
+std::string skyboxTextureFile = "textures/skybox.png";
+std::string floorTextureFile = "textures/dirt.png";
+std::string logsTextureFile = "textures/embers.png";
+std::string fireTextureFile = "textures/fire_profile_texture.png";
+std::string skybox = "./models/skybox.ply";
+std::string logs = "./models/Logs.ply";
 
 void printVec3(vec3 v) { std::cout << v.x << "\t" << v.y << "\t" << v.z << std::endl; }
+//Rodrigues' rotation formula
+vec3 rotAny(vec3 vector, vec3 axis, float angle) { return vec3((vector * cos(angle)) + (cross(axis, vector) * sin(angle)) + (axis * dot(axis, vector) * (1.f - cos(angle)))); }
 
 float spline(float knot, float knots[], int numOfKnots, int i, int p)
 {
 	float	t = knot,
-			ti = knots[i],
-			ti1 = knots[i + 1],
-			tip = knots[i + p],
-			tip1 = knots[i + p + 1];
+		ti = knots[i],
+		ti1 = knots[i + 1],
+		tip = knots[i + p],
+		tip1 = knots[i + p + 1];
 
 	if (p < err)
 		if (ti <= t && t < ti1) return 1.f;
 		else					return 0.f;
 	else
 	{
-		float	ratio1	= 0.f, 
-				ratio2	= 0.f,
-				den1	= tip  - ti,
-				den2	= tip1 - ti1;
+		float	ratio1 = 0.f,
+			ratio2 = 0.f,
+			den1 = tip - ti,
+			den2 = tip1 - ti1;
 
 		// if a denominator = 0 (nan return), simply make that ratio 0.
 		if (den1 < err) ratio1 = 0.f;
@@ -49,52 +51,31 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 
 void SceneShader::createFireVertexBuffer()
 {
-	const int	totalControlPoints	= 1000,					// desired nmumber of control points
-				n					= totalControlPoints,
-				degree				= 3,					// 3rd degree curve (why not?)
-				numOfKnots			= (totalControlPoints - 1) + degree + 2;	// number of knot values
+	const int	totalControlPoints = 100,	// desired nmumber of control points
+		n = totalControlPoints,
+		degree = 3,							// 3rd degree curve (why not?)
+		numOfKnots = (totalControlPoints - 1) + degree + 2;	// number of knot values
 
-	float knots[numOfKnots], 
-		  UV[numOfKnots];
-	vec3  C[numOfKnots];
+	float	knots[numOfKnots],
+			UV[numOfKnots];
+	vec3	C[numOfKnots],
+		controlPoints[totalControlPoints],
+		fireBase(0.f, 0.f, 0.f),
+		fireTop(0.f, 1.f, 0.f);
 
-	#define line
-	#ifdef line
-		vec3 fireBase(0.f, 0.f, 0.f);
-		vec3 fireTop(0.f, 1.f, 0.f);
-		vec3 controlPoints[totalControlPoints];
-		float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
-		for (int i = 1; i < totalControlPoints; i++)
-			controlPoints[i] = fireBase + (float)i * controlPointStep * fireTop;
-	#endif
-	#ifndef line
-		vec3 controlPoints[totalControlPoints] =
-		{
-			vec3(0.f, 0.f, 0.f),
-			vec3(0.05f, 0.1f, 0.f),
-			vec3(0.1f, 0.2f, 0.f),
-			vec3(0.15f, 0.35f, 0.f),
-			vec3(0.2f, 0.4f, 0.f),
-			vec3(0.3f, 0.425f, 0.f),
-			vec3(0.35f, 0.45f, 0.f),
-			vec3(0.4f, 0.5f, 0.f),
-			vec3(0.45f, 0.6f, 0.f),
-			vec3(0.5f, 0.7f, 0.f)
-		};
-	#endif
-	
-	// generate the knot points. the if an the else keep the spline closed. Knot spacing is uniform, [0,1]
-	// equation from fire paper
+	float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
+	for (int i = 1; i < totalControlPoints; i++)
+		controlPoints[i] = fireBase + (float)i * controlPointStep * fireTop;
 
-	// array holding the final position of the knots
 
+	// generate the knot points. the if an the else keep the spline closed. Knot spacing is uniform, [0,1] equation from fire paper
 	// C[i] is there so thatwe can skip some loops in the next for loop
 	for (int i = 0; i < numOfKnots; i++)
 	{
 		UV[i] = ((float)i) / ((float)numOfKnots - 1); // give thy Y value for the UV coordinates
 
 		if (i <= degree)
-			knots[i] = 0.f; 
+			knots[i] = 0.f;
 		else if (i < n)
 			knots[i] = (float)(i - degree) / (float)(n - degree);
 		else
@@ -110,22 +91,18 @@ void SceneShader::createFireVertexBuffer()
 	for (int i = numOfKnots - degree - 1; i < numOfKnots; i++)
 		C[i] = controlPoints[totalControlPoints - 1];
 
-	
-
 	vec3 velocity[numOfKnots];	// velocity vector for each knot point
 	for (int i = 0; i < numOfKnots; i++)
 	{
-		if (i == numOfKnots - 1) 
+		if (i == numOfKnots - 1)
 			velocity[i] = C[i - 1] - C[i];
 		velocity[i] = C[i] - C[i + 1];
 	}
-		
 
 	fireGeneratedPoints = sizeof(C) / sizeof(C[0]);
 
-
-
 	fireTexture = loadTexture(fireTextureFile);
+
 	glGenVertexArrays(1, &fireVertexArray);
 	glBindVertexArray(fireVertexArray);
 
@@ -160,9 +137,6 @@ void SceneShader::createFireVertexBuffer()
 		}
 	if (redo) createFireVertexBuffer();
 }
-
-
-
 
 void SceneShader::createLogsVertexBuffer()
 {

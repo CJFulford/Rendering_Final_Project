@@ -4,9 +4,9 @@ layout(lines) in;
 layout(triangle_Strip, max_vertices = 144) out;
 
 uniform mat4 	modelview, projection;
-in vec3 vert[], vel[];
+in vec3  vel[];
 in float UVGeomIn[];
-out vec3 vertex, uvFrag;
+out vec3 uvFrag;
 out float radius;
 
 const float PI = 3.14159265359,
@@ -26,6 +26,7 @@ vec3 rotAny (vec3 vector, vec3 axis, float angle)
 
 void main (void)
 {
+	
 	radius = scale;
 	// Main Article: http://graphics.cs.ucdavis.edu/~hamann/FullerKrishnanMahrousHamannJoyFirePaperFor_I3D2007AsSubmitted11012006.pdf
 	// http://http.developer.nvidia.com/GPUGems/gpugems_ch39.html
@@ -37,7 +38,6 @@ void main (void)
 	// uvGeom is in here so to coordinate the link between teh corner positions an the texture coordinates
 	for (int i = 0; i < gl_in.length(); i++)
 	{
-		vertex = vert[i];
 		vec4 perp, perpRot;
 
 		if (vel[i].z > err || vel[i].z < -err)
@@ -60,19 +60,19 @@ void main (void)
 		perpRot = normalize(perpRot) * scale;
 		
 		cube[count] = (modelview * (gl_in[i].gl_Position + perpRot)).xyz;
-		uvGeom[count] = vec3(1.f, UVGeomIn[i], 1.f);
+		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f);
 		count++;
 		
 		cube[count] = (modelview * (gl_in[i].gl_Position + perp)).xyz; 	
-		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f);	
-		count++;
-		
-		cube[count] = (modelview * (gl_in[i].gl_Position - perpRot)).xyz; 
 		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f);	
 		count++;
 		
+		cube[count] = (modelview * (gl_in[i].gl_Position - perpRot)).xyz; 
+		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f);	
+		count++;
+		
 		cube[count] = (modelview * (gl_in[i].gl_Position - perp)).xyz;	
-		uvGeom[count] = vec3(-1.f, UVGeomIn[i], -1.f);	
+		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f);	
 		count++;
 	}
 	
@@ -87,7 +87,7 @@ void main (void)
 	}
 
 	// indicies in cube array that define all edges in the cube
-	ivec2 edges[12] = 
+	const ivec2 edges[12] = 
 	{	
 		ivec2(0,1),
 		ivec2(0,3),
@@ -260,18 +260,15 @@ void main (void)
 		else if (c == 3)	// if there are 3 points, just a trianlge and be done with it.
 		{
 			gl_Position = projection * vec4(sortedPoints[0], 1.f);
-			uvFrag = sortedUVGeom[0];
-			vertex = gl_Position.xyz;	
+			uvFrag = sortedUVGeom[0];	
 			EmitVertex();
 			
 			gl_Position = projection * vec4(sortedPoints[1], 1.f); 
-			uvFrag = sortedUVGeom[1];
-			vertex = gl_Position.xyz;	
+			uvFrag = sortedUVGeom[1];	
 			EmitVertex();
 			
 			gl_Position = projection * vec4(sortedPoints[2], 1.f);
-			uvFrag = sortedUVGeom[2];
-			vertex = gl_Position.xyz; 	
+			uvFrag = sortedUVGeom[2]; 	
 			EmitVertex();
 			
 			EndPrimitive();
@@ -281,18 +278,15 @@ void main (void)
 			for (int i = 0; i < c; i++)
 			{
 				gl_Position = projection * vec4(sortedPoints[i], 1.f);
-				uvFrag = sortedUVGeom[i];
-				vertex = gl_Position.xyz;			
+				uvFrag = sortedUVGeom[i];			
 				EmitVertex();
 				
 				gl_Position = projection * vec4(sortedPoints[(i + 1) % c], 1.f);
 				uvFrag = sortedUVGeom[(i + 1) % c];
-				vertex = gl_Position.xyz;	
 				EmitVertex();
 				 	
 				gl_Position = projection * vec4(midPoint, 1.f);
 				uvFrag = midpointUV;
-				vertex = gl_Position.xyz;
 				EmitVertex();
 				
 			}
