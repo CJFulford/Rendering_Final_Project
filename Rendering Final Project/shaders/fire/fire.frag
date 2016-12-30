@@ -4,10 +4,11 @@ out vec4 color;
 
 uniform sampler2D image;
 uniform float time;
-uniform float radius = 0.2f;
+uniform float radius;
 
 in vec3 uvFrag;
-const float PI = 3.14159265359;
+const float PI = 3.14159265359,
+			limit = 0.01;
 
 // ==========================================================
 // https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
@@ -58,7 +59,7 @@ float pNoise(vec2 p, int res){
 void main (void)
 {
 	vec3 UV = uvFrag;
-	float t = UV.z + (time * 400.f);
+	float t = time * 400.f;
 	vec2 uv;
 	 
 	
@@ -73,7 +74,7 @@ void main (void)
 		
 		
 	vec4 noiseScale = vec4(radius, radius, length, 1.f) * frequency;
-	vec4 noisePosition = vec4(UV.x, UV.y, UV.z - t, t);
+	vec4 noisePosition = vec4(UV.x, UV.y + t, UV.z, t);
 		
 	// scale the position of the noise with the position of the fire
 	for (int i = 0; i < 4; i++)
@@ -82,10 +83,19 @@ void main (void)
 	for (float i = 0.f; i < octaves; i++)
 		turb += pow(gain, i) * pNoise(noisePosition.zw, 50);
 
-	float u = sqrt((UV.x * UV.x) + (UV.y * UV.y));	
-	
+	float u = sqrt((UV.x * UV.x) + (UV.y * UV.y));
 	float v = (turb + 1.f) / 2.f;
-	color = vec4(texture(image, vec2(u, v)).xyz, 1.f / 8.f);	// dont know why but the UV in the book appear to be backwards
+	
+	if (u < limit) u = limit;
+	if (u > 1.f - limit) u = 1.f - limit;
+	if (v < limit) v = limit;
+	if (v > 1.f - limit) v = 1.f - limit;
+	
+	vec4 col = vec4(texture(image, vec2(u, v)).xyz, 1.f / 8.f);	// dont know why but the UV in the book appear to be backwards
+	
+	if (col.x < limit && col.y < limit && col.z < limit) col = vec4(0.f, 0.f, 0.f, 0.f);
+	
+	color = col;
 }
 
 

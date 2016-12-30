@@ -4,6 +4,8 @@ layout(lines) in;
 layout(triangle_Strip, max_vertices = 146) out;
 
 uniform mat4 	modelview, projection;
+uniform int lap = 0;
+
 in vec3  vel[];
 in float UVGeomIn[];
 out vec3 uvFrag;
@@ -13,6 +15,23 @@ const float PI = 3.14159265359,
 			scale = 0.2f,
 			numOfSlices = 8.f, // if update, change max verticies. so = 18 * numOSlices
 			err = 0.00001f;
+	
+// indicies in cube array that define all edges in the cube		
+const ivec2 edges[12] = 
+{	
+	ivec2(0,1),
+	ivec2(0,3),
+	ivec2(0,4),
+	ivec2(1,2),
+	ivec2(1,5),
+	ivec2(2,3),
+	ivec2(2,6),
+	ivec2(3,7),
+	ivec2(4,5),
+	ivec2(4,7),
+	ivec2(5,6),
+	ivec2(6,7)
+};
 
 
 //Rodrigues' rotation formula
@@ -22,15 +41,16 @@ vec3 rotAny (vec3 vector, vec3 axis, float angle)
 				(cross(axis, vector) * sin(angle)) + 
 				(axis * dot(axis, vector) * (1.f - cos(angle))));
 }
+mat3 rotateX(float a){return mat3(1.f, 0.f, 0.f, 0.f, cos(a), -sin(a), 0.f, sin(a), cos(a));}
 mat3 rotateY(float a){return mat3(cos(a), 0.f, sin(a), 0.f, 1.f, 0.f, -sin(a), 0.f, cos(a));}
+mat3 rotateZ(float a){return mat3(cos(a), -sin(a), 0.f, sin(a), cos(a), 0.f, 0.f, 0.f, 1.0);}
 
+const mat3 baseRotation = rotateY(PI / 4.f);
 
 void main (void)
 {
 	
 	radius = scale;
-	// Main Article: http://graphics.cs.ucdavis.edu/~hamann/FullerKrishnanMahrousHamannJoyFirePaperFor_I3D2007AsSubmitted11012006.pdf
-	// http://http.developer.nvidia.com/GPUGems/gpugems_ch39.html
 	
 	vec3 	cube[8], uvGeom[8];
 	int count = 0;
@@ -57,8 +77,9 @@ void main (void)
 			perpRot = vec3(0.f, 0.f, 1.f);
 		}
 		
-		perp = rotateY(PI / 4.f) * perp;
-		perpRot = rotateY(PI / 4.f) * perpRot;
+		// rotate so we look at it head on at startup
+		perp = baseRotation * perp;
+		perpRot = baseRotation * perpRot;
 		
 		vec4 perp4 = vec4(normalize(perp) * scale, 0.f);
 		vec4 perpRot4 = vec4(normalize(perpRot) * scale, 0.f);
@@ -68,11 +89,11 @@ void main (void)
 		count++;
 		
 		cube[count] = (modelview * (gl_in[i].gl_Position + perp4)).xyz; 	
-		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f) + perp4.xyz;	
+		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f) + perp4.xyz;	
 		count++;
 		
 		cube[count] = (modelview * (gl_in[i].gl_Position - perpRot4)).xyz; 
-		uvGeom[count] = vec3(1.f, UVGeomIn[i], -1.f) - perpRot4.xyz;	
+		uvGeom[count] = vec3(-1.f, UVGeomIn[i], 1.f) - perpRot4.xyz;	
 		count++;
 		
 		cube[count] = (modelview * (gl_in[i].gl_Position - perp4)).xyz;	
@@ -89,23 +110,6 @@ void main (void)
 		if 		(cube[i].z < minZ){minZ = cube[i].z;}
 		else if (cube[i].z > maxZ){maxZ = cube[i].z; maxI = i;}
 	}
-
-	// indicies in cube array that define all edges in the cube
-	const ivec2 edges[12] = 
-	{	
-		ivec2(0,1),
-		ivec2(0,3),
-		ivec2(0,4),
-		ivec2(1,2),
-		ivec2(1,5),
-		ivec2(2,3),
-		ivec2(2,6),
-		ivec2(3,7),
-		ivec2(4,5),
-		ivec2(4,7),
-		ivec2(5,6),
-		ivec2(6,7)
-	};
 	
 	// plane normal points from camera to center of cube
 	vec3 planeNormal = cube[0];
@@ -113,29 +117,29 @@ void main (void)
 		planeNormal += cube[i];
 	planeNormal = normalize(planeNormal / 8.f); // 8 corners for cube
 	
-	
 	for (	
 		vec3 planePoint = cube[maxI];
 		planePoint.z > minZ;  
-		planePoint += planeNormal * ((maxZ - minZ) / numOfSlices) // normal points from camera to cube so add since we are walking from min distance to max distance
+		planePoint += planeNormal * (((maxZ - minZ) / numOfSlices) / 2.f) + (((maxZ - minZ) / numOfSlices) * (lap / 4.f)) // normal points from camera to cube so add since we are walking from min distance to max distance
 		)
 	{
 		// list of points intersecting plane. max intersections = 6, need uvGeom to stay linked to coordinate
 		vec3 points[6],	pointsUV[6];
 		int c = 0; 	// counts entries in points. used for indexing
 		// check each edge for intersection wiht the plane
-		for (int edge = 0; edge < edges.length(); edge++)
+		// 12 edges on a cube
+		for (int edge = 0; edge < 12; edge++)
 		{	
 			// convert the edge into a vector
 			vec3 	origin = cube[edges[edge].x],
-					direction = normalize(cube[edges[edge].x] - cube[edges[edge].y]);
+					direction = normalize(origin - cube[edges[edge].y]);
 			
 			
 			float 	denominator = dot(direction, planeNormal),
 					numerator = dot(planePoint - origin, planeNormal);
 			if (denominator < err && denominator > -err && numerator < err && numerator > -err) // true if edge is parallel and contained in plane
 			{
-				points[c] = cube[edges[edge].x];
+				points[c] = origin;
 				pointsUV[c] = uvGeom[edges[edge].x];
 				c++;
 				
@@ -155,13 +159,13 @@ void main (void)
 				// a positive dot product means the point is front facing and a negative dot product means the point is back facing.
 				// a 0 dot product (-err < x < err becasue of floats) means the point lies on the plane and does intersect it
 				
-				float angle1 = dot(planePoint - cube[edges[edge].x], planeNormal);
+				float angle1 = dot(planePoint - origin, planeNormal);
 				float angle2 = dot(planePoint - cube[edges[edge].y], planeNormal);
 				
 				// account for points being on the plane first
 				if (angle1 < err && angle1 > -err)		// first point is on the plane
 				{
-					points[c] = cube[edges[edge].x];
+					points[c] = origin;
 					pointsUV[c] = uvGeom[edges[edge].x];
 					c++;
 				}

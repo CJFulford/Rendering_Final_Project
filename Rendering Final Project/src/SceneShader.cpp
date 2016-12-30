@@ -9,14 +9,20 @@ void SceneShader::renderFire()
 	glBindVertexArray(fireVertexArray);
 	glUseProgram(fireProgram);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 
 	texture.bind2DTexture(fireProgram, fireTexture, std::string("image"));
 	passBasicUniforms(&fireProgram);
 
 	glUniform1f(glGetUniformLocation(fireProgram, "time"), time);
 
-	glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
+	int laps = 2;
+
+	for (int i = 0; i < laps; i++)
+	{
+		glUniform1i(glGetUniformLocation(fireProgram, "lap"), i);
+		glDrawArrays(GL_LINE_STRIP, 0, fireGeneratedPoints);
+	}
 
 	texture.unbind2DTexture();
 	glDisable(GL_BLEND);
