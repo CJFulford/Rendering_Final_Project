@@ -158,7 +158,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\trimesh2\include\TriMesh.h" />
     <ClInclude Include="src\SceneShader.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="texture\lodepng.h" />
@@ -170,29 +169,6 @@
     <None Include="shaders\fire\fire.vert" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\trimesh2\libsrc\conn_comps.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\diffuse.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\edgeflip.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\faceflip.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\filter.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\GLCamera.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\ICP.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\KDtree.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\lmsmooth.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\overlap.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\remove.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\reorder_verts.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\shared.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\subdiv.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_bounding.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_connectivity.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_curvature.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_grid.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_io.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_normals.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_pointareas.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_stats.cc" />
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_tstrips.cc" />
     <ClCompile Include="src\Buffers.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SceneShader.cpp" />

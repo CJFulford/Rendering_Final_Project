@@ -13,7 +13,6 @@
 #include "..\texture\lodepng.h"
 #include <vector>
 #include <GLFW/glfw3.h>
-#include <TriMesh.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -47,11 +46,6 @@ public:
 
 
 private:
-	// functions
-	trimesh::TriMesh* readMesh(std::string filename, std::vector<unsigned int> *triangleIndices);
-	std::vector<glm::vec2> calculateSphereicalUVCoordinates(trimesh::TriMesh * mesh);
-	std::vector<glm::vec2> calculateCylindricalUVCoordinates(trimesh::TriMesh* mesh);
-
 	void createFireVertexBuffer();
 
 	void SceneShader::passBasicUniforms(GLuint *program);

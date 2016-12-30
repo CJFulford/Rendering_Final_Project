@@ -42,9 +42,6 @@
     <ClInclude Include="texture\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\trimesh2\include\TriMesh.h">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\fire\fire.frag">
@@ -75,75 +72,6 @@
     </ClCompile>
     <ClCompile Include="src\Shader.cpp">
       <Filter>Source Files\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\conn_comps.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\diffuse.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\edgeflip.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\faceflip.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\filter.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\GLCamera.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\ICP.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\KDtree.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\lmsmooth.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\overlap.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\remove.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\reorder_verts.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\shared.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\subdiv.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_bounding.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_connectivity.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_curvature.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_grid.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_io.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_normals.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_pointareas.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_stats.cc">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\trimesh2\libsrc\TriMesh_tstrips.cc">
-      <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
