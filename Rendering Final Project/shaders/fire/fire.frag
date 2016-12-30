@@ -5,7 +5,8 @@ out vec4 color;
 uniform sampler2D image;
 
 in vec3 vertex;
-in vec3 UVS;
+in vec3 uvFrag;
+in float slices;
 
 void main (void)
 {
@@ -14,9 +15,8 @@ void main (void)
 	// do the texture work in the shader
 	// calc uv and access texture like any other
 	vec2 uv;
-	uv.x = sqrt((vertex.x * vertex.x) + (vertex.y * vertex.y));
-	uv.y = vertex.z;
+	uv.x = sqrt((uvFrag.x * uvFrag.x) + (uvFrag.y * uvFrag.y));
+	uv.y = uvFrag.z;
 
-	//color = texture(image, uv); // just leave as green for default
-	color = vec4(vertex, 1.f);
+	color = texture(image, uv);
 }

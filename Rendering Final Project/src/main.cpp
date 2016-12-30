@@ -83,7 +83,7 @@ void scroll(GLFWwindow* w, double x, double y)
 
 void render()
 {
-	GLfloat color[] = { 0.3215f, 0.3411f, 0.4352f, 1.0f };
+	GLfloat color[] = { 0.f, 0.f, 0.f };
 	const GLfloat zero = 1.0f;
 
 	glClearBufferfv(GL_COLOR, 0, color);

@@ -9,11 +9,11 @@ uniform mat4 projection;
 
 out vec3 vert;
 out vec3 vel;
-out float UV;
+out float UVGeomIn;
 
 void main (void)
 {
-	UV = uv;
+	UVGeomIn = uv;
 	vel = velocity;
 	vert = position.xyz;
 
