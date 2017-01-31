@@ -6,16 +6,11 @@
 
 #include "..\texture\texture.h"
 #include "..\texture\lodepng.h"
+#include  "ToolsHeader.h"
 #include <GLFW\glfw3.h>
 
 #include <glm\glm.hpp>
-#include <glm\gtx\transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
-
-#include <cstdlib>
-#include <cstdio>
-#include <iostream>
-#include <vector>
 
 const int SCREEN_WIDTH = 700, SCREEN_HEIGHT = SCREEN_WIDTH;
 
@@ -58,7 +53,7 @@ private:
 	int fireGeneratedPoints = 0;
 
 	mat4 modelview, 
-		projection = perspective(45.0f, aspectRatio, 0.01f, 100.0f);
+		projection;
 
 	float zTranslation = 1.f;
 	float xRot = 0.f;

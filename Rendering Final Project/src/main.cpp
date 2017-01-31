@@ -1,4 +1,5 @@
 #include "SceneShader.h"
+#include <iostream>
 
 double mouse_old_x, mouse_old_y;
 int mouse_buttons = 0;

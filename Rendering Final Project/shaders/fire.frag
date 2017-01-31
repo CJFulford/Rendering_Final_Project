@@ -153,7 +153,7 @@ void main (void)
 	if (v > 1.f - limit) v = 1.f - limit;
 	
 	// dont know why but the UV in the book appear to be backwards
-	vec4 col = vec4(texture(image, vec2(u, v)).xyz, 1.f / 8.f);	
+	vec4 col = vec4(texture(image, vec2(u, v)).xyz, 1.f);	
 	
 	color = col;
 }
