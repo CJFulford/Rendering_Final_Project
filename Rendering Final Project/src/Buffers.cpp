@@ -3,9 +3,18 @@
 
 std::string fireTextureFile = "textures/fire_profile_texture.png";
 
-void printVec3(vec3 v) { std::cout << v.x << "\t" << v.y << "\t" << v.z << std::endl; }
+void printVec3(vec3 v) 
+{ 
+	std::cout << v.x << "\t" << v.y << "\t" << v.z << std::endl; 
+}
+
 //Rodrigues' rotation formula
-vec3 rotAny(vec3 vector, vec3 axis, float angle) { return vec3((vector * cos(angle)) + (cross(axis, vector) * sin(angle)) + (axis * dot(axis, vector) * (1.f - cos(angle)))); }
+vec3 rotAny(vec3 vector, vec3 axis, float angle) 
+{ 
+	return vec3((vector * cos(angle)) + 
+		(cross(axis, vector) * sin(angle)) + 
+		(axis * dot(axis, vector) * (1.f - cos(angle)))); 
+}
 
 float spline(float knot, float knots[], int numOfKnots, int i, int p)
 {
@@ -26,7 +35,7 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 			den2 = tip1 - ti1;
 
 		// if a denominator = 0 (nan return), simply make that ratio 0.
-		if (den1 < err) ratio1 = 0.f;
+		if (abs(den1) < err) ratio1 = 0.f;
 		else
 		{
 			ratio1 = (t - ti) / den1;
@@ -34,7 +43,7 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 		}
 
 
-		if (den2 < err) ratio2 = 0.f;
+		if (abs(den2) < err) ratio2 = 0.f;
 		else
 		{
 			ratio2 = (tip1 - t) / den2;
@@ -46,41 +55,43 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 
 void SceneShader::createFireVertexBuffer()
 {
-	const int	totalControlPoints = 100,	// desired nmumber of control points
-		n = totalControlPoints,
-		degree = 3,							// 3rd degree curve (why not?)
-		numOfKnots = (totalControlPoints - 1) + degree + 2;	// number of knot values
+	const int	totalControlPoints = 100,
+		m = totalControlPoints - 1,
+		degree = 3,
+		order = degree + 1,
+		numOfKnots = (totalControlPoints - 1) + degree + 2;
 
 	float	knots[numOfKnots],
 			UV[numOfKnots];
-	vec3	C[numOfKnots],
-		controlPoints[totalControlPoints],
-		fireBase(0.f, 0.f, 0.f),
-		fireTop(0.f, 1.f, 0.f);
+	
+	vec3	points[numOfKnots],
+			controlPoints[totalControlPoints],
+			fireBase(0.f, 0.f, 0.f),
+			fireTop(0.f, 1.f, 0.f);
 
-	float controlPointStep = 1.f / ((float)totalControlPoints - 1.f); // totalControlPoints-1 so that fireTop is one of the control points
+	float controlPointStep = 1.f / (m);
+
+	// generate linear B-spline. Not fancy, but it works
 	for (int i = 1; i < totalControlPoints; i++)
 		controlPoints[i] = fireBase + (float)i * controlPointStep * fireTop;
 
-
-	// generate the knot points. the if an the else keep the spline closed. Knot spacing is uniform, [0,1] equation from fire paper
-	// C[i] is there so thatwe can skip some loops in the next for loop
+	// Standard knot spacing
 	for (int i = 0; i < numOfKnots; i++)
 	{
 		UV[i] = (float)i / (float)numOfKnots; // give thy Y value for the UV coordinates
 
-		if (i <= degree)
+		if (i < degree)
 			knots[i] = 0.f;
-		else if (i < n)
-			knots[i] = (float)(i - degree) / (float)(n - degree);
-		else
+		else if (i > m + 1)
 			knots[i] = 1.f;
+		else
+			knots[i] = knots[i-1] + (1.f / (numOfKnots - (2.f * order)));
 	}
 
 	// generate the final knot points
-	for (int knot = 0; knot < n; knot++)
+	for (int knot = 0; knot < totalControlPoints; knot++)
 		for (int i = 0; i < numOfKnots; i++)
-			C[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
+			points[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
 
 	// need this otherwise last points will be 0
 	for (int i = numOfKnots - degree - 1; i < numOfKnots; i++)

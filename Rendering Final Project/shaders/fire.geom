@@ -4,7 +4,6 @@ layout(lines) in;
 layout(triangle_Strip, max_vertices = 146) out;
 
 uniform mat4 	modelview, projection;
-uniform int lap = 0;
 
 in vec3  vel[];
 in float UVGeomIn[];
@@ -12,8 +11,8 @@ out vec3 uvFrag;
 out float radius;
 
 const float PI = 3.14159265359,
-			scale = 0.2f,
-			numOfSlices = 8.f, // if update, change max verticies. so = 18 * numOSlices
+			scale = 0.3f,
+			numOfSlices = 20.f, // if update, change max verticies. so = 18 * numOSlices
 			err = 0.00001f;
 	
 // indicies in cube array that define all edges in the cube		
@@ -120,7 +119,8 @@ void main (void)
 	for (	
 		vec3 planePoint = cube[maxI];
 		planePoint.z > minZ;  
-		planePoint += planeNormal * (((maxZ - minZ) / numOfSlices) / 2.f) + (((maxZ - minZ) / numOfSlices) * (lap / 4.f)) // normal points from camera to cube so add since we are walking from min distance to max distance
+		// normal points from camera to cube so add since we are walking from min distance to max distance
+		planePoint += planeNormal * ((maxZ - minZ) / numOfSlices)
 		)
 	{
 		// list of points intersecting plane. max intersections = 6, need uvGeom to stay linked to coordinate

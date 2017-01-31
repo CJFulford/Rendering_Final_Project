@@ -33,26 +33,15 @@
     <ClInclude Include="src\SceneShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="texture\lodepng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="texture\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="shaders\fire\fire.frag">
-      <Filter>Source Files\shaders\fire</Filter>
-    </None>
-    <None Include="shaders\fire\fire.vert">
-      <Filter>Source Files\shaders\fire</Filter>
-    </None>
-    <None Include="shaders\fire\fire.geom">
-      <Filter>Source Files\shaders\fire</Filter>
-    </None>
+    <ClInclude Include="src\ShaderBuilder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="texture\lodepng.cpp">
@@ -70,7 +59,10 @@
     <ClCompile Include="src\SceneShader.cpp">
       <Filter>Source Files\src</Filter>
     </ClCompile>
-    <ClCompile Include="src\Shader.cpp">
+    <ClCompile Include="libraries\GLAD V4.5\src\glad.c">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ShaderBuilder.cpp">
       <Filter>Source Files\src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -78,5 +70,16 @@
     <Image Include="textures\fire_profile_texture.png">
       <Filter>Source Files\textures</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\fire.frag">
+      <Filter>Source Files\shaders\fire</Filter>
+    </None>
+    <None Include="shaders\fire.geom">
+      <Filter>Source Files\shaders\fire</Filter>
+    </None>
+    <None Include="shaders\fire.vert">
+      <Filter>Source Files\shaders\fire</Filter>
+    </None>
   </ItemGroup>
 </Project>

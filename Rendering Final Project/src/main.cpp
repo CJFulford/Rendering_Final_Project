@@ -1,46 +1,35 @@
 #include "SceneShader.h"
 
-double mouse_old_x;
-double mouse_old_y;
+double mouse_old_x, mouse_old_y;
 int mouse_buttons = 0;
-float rotate_x = 0.0;
-float rotate_y = 0.0;
-float translate_z = 1.0f;
+float	rotate_x = 0.0,
+		rotate_y = 0.0,
+		translate_z = 1.0f;
 
 #define maxZoom 1.2f
 #define minZoom 0.3f
 #define minRotate 0
 #define maxRotate 45
 
-int width = 700;
-int height = width;
-
 GLFWwindow* window;
 SceneShader shader;
 
-static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
 	if (action == GLFW_PRESS)
 	{
 		switch (key)
 		{
-		case (27):
-			exit(EXIT_FAILURE);
-		case (GLFW_KEY_N):
-			std::cout << "Recompiling Shaders... ";
-			shader.buildShaders();
-			std::cout << "DONE" << std::endl;
-			break;
-		case (GLFW_KEY_M):
-			std::cout << "Rebuilding Models and Shaders... " << std::endl;
-			shader.shutdown();
-			shader.startup();
-			std::cout << "DONE" << std::endl;
-			break;
-		default:
-			break;
+			case(GLFW_KEY_ESCAPE):
+				glfwSetWindowShouldClose(window, GL_TRUE);
+				break;
+			case (GLFW_KEY_N):
+				std::cout << "Recompiling Shaders... ";
+				shader.buildShaders();
+				std::cout << "DONE" << std::endl;
+				break;
+			default:
+				break;
 		}
 	}
 }
@@ -58,17 +47,18 @@ void mouse(GLFWwindow* window, int button, int action, int mods)
 
 void motion(GLFWwindow* w, double x, double y)
 {
-	double dx, dy;
-	dx = (x - mouse_old_x);
-	dy = (y - mouse_old_y);
+	double dx = (x - mouse_old_x), dy = (y - mouse_old_y);
+
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1))
 	{
 		rotate_x += (float)(dy * 0.5f);
 		rotate_y += (float)(dx * 0.5f);
-		if (rotate_x < minRotate) rotate_x = minRotate;
-		else if (rotate_x > maxRotate) rotate_x = maxRotate;
-		if (rotate_y < -maxRotate) rotate_x = -maxRotate;
-		else if (rotate_y > maxRotate) rotate_x = maxRotate;
+
+		// restricts the vertical viewing angle of the fire
+		if (rotate_x < minRotate) 
+			rotate_x = minRotate;
+		else if (rotate_x > maxRotate) 
+			rotate_x = maxRotate;
 	}
 	mouse_old_x = x;
 	mouse_old_y = y;
@@ -76,76 +66,50 @@ void motion(GLFWwindow* w, double x, double y)
 
 void scroll(GLFWwindow* w, double x, double y)
 {
-	double dy;
-	dy = (x - y);
-	translate_z += (float) (dy * 0.03f);
-	if (translate_z < minZoom) translate_z = minZoom;
-	//else if (translate_z > maxZoom) translate_z = maxZoom;
+	translate_z += (float) ((x - y) * 0.03f);
+	if (translate_z < minZoom) 
+		translate_z = minZoom;
+	else if (translate_z > maxZoom) 
+		translate_z = maxZoom;
 }
 
-void render()
+void errorCallback(int error, const char* description)
 {
-	GLfloat color[] = { 0.f, 0.f, 0.f };
-	const GLfloat zero = 1.0f;
-
-	glClearBufferfv(GL_COLOR, 0, color);
-	glClearBufferfv(GL_DEPTH, 0, &zero);
-	glEnable(GL_DEPTH_TEST);
-
-	shader.setRotationY(rotate_y);
-	shader.setRotationX(rotate_x);
-	shader.setZTranslation(translate_z);
-
-	shader.render();
-
-	glDisable(GL_DEPTH_TEST);
+	std::cout << "GLFW ERROR " << error << ": " << description << std::endl;
 }
-
-void reshape(GLFWwindow* w, int widthX, int heightY)
-{
-	width = widthX;
-	height = heightY;
-	glViewport(0, 0, width, height);
-}
-
-static void error_callback(int error, const char* description){fputs(description, stderr);}
 
 void startGlew()
 {
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
+	if (!gladLoadGL())
 	{
-		/* Problem: glewInit failed, something is seriously wrong */
-		fprintf(stderr, "Error: %s \n", glewGetErrorString(err));
+		std::cout << "Failed to initialize GLAD" << std::endl;
+		exit(EXIT_FAILURE);
 	}
-	fprintf(stdout, "Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-
-	// get version info
-	const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
-	const GLubyte* vendor = glGetString(GL_VENDOR); // vendor name string
-	const GLubyte* version = glGetString(GL_VERSION); // version as a string
-													  // GLSL version string
-	const GLubyte* glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
 	GLint major, minor;
 	glGetIntegerv(GL_MAJOR_VERSION, &major); // get integer (only if gl version > 3)
 	glGetIntegerv(GL_MINOR_VERSION, &minor); // get dot integer (only if gl version > 3)
-	printf("OpenGL on %s %s\n", vendor, renderer);
-	printf("OpenGL version supported %s\n", version);
-	printf("GLSL version supported %s\n", glslVersion);
+	printf("OpenGL on %s %s\n", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
+	printf("OpenGL version supported %s\n", glGetString(GL_VERSION));
+	printf("GLSL version supported %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
 	printf("GL version major, minor: %i.%i\n", major, minor);
 }
 
 int main(int argc, char**argv)
 {
-
-	glfwSetErrorCallback(error_callback);
-
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
-
+	glfwSetErrorCallback(errorCallback);
+	
+	glfwWindowHint(GLFW_RESIZABLE, false);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, true);
 	glfwWindowHint(GLFW_SAMPLES, 16);
 
-	window = glfwCreateWindow(width, height, "OpenGL Window", NULL, NULL);
+	window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Volumetric Fire", NULL, NULL);
+	if (!window) {
+		std::cout << "Failed to create window" << std::endl;
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
 
 	glfwMakeContextCurrent(window);
 
@@ -153,25 +117,34 @@ int main(int argc, char**argv)
 	glfwSetMouseButtonCallback(window, mouse);
 	glfwSetCursorPosCallback(window, motion);
 	glfwSetScrollCallback(window, scroll);
-	glfwSetWindowSizeCallback(window, reshape);
+
+	glfwSwapInterval(1);
 
 	startGlew();
+
 	shader.startup();
 
-	float ratio;
-	int width, height;
-	
-
+	float time = 0.f;
 	while (!glfwWindowShouldClose(window))
 	{
-		glfwGetFramebufferSize(window, &width, &height);
-		ratio = width / (float)height;
-		shader.setAspectRatio(ratio);
+		GLfloat backgroundColor[] = { 0.f, 0.f, 0.5f };
+		const GLfloat zero = 1.0f;
 
-		render();
+		glClearBufferfv(GL_COLOR, 0, backgroundColor);
+		glClearBufferfv(GL_DEPTH, 0, &zero);
+		glEnable(GL_DEPTH_TEST);
 
+		shader.setRotationY(rotate_y);
+		shader.setRotationX(rotate_x);
+		shader.setZTranslation(translate_z);
+
+		shader.render(time);
+
+		glDisable(GL_DEPTH_TEST);
 		glfwSwapBuffers(window);
 		glfwPollEvents();
+		
+		time += 0.03f;
 	}
 
 	glfwDestroyWindow(window);
