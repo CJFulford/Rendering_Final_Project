@@ -16,8 +16,29 @@ vec3 rotAny(vec3 vector, vec3 axis, float angle)
 		(axis * dot(axis, vector) * (1.f - cos(angle)))); 
 }
 
-float spline(float knot, float knots[], int numOfKnots, int i, int p)
+//float spline(float knot, float knots[], int numOfKnots, int i, int p)
+float spline(float knots[], int i, int k)
 {
+	if (k == 1 && knots[i] <= i && i <= knots[i + 1])
+		return 1;
+	else if (k == 1)
+		return 0;
+	else
+	{
+		float ratio1 = 0.f, ratio2 = 0.f;
+		// if denominator of a term = 0, leave the whole term as 0
+		if (abs(knots[i + k - 1] - knots[i]) > err)
+			ratio1 = (i - knots[i]) / (knots[i + k - 1] - knots[i]);
+
+		if (abs(knots[i + k] - knots[i + 1]) > err)
+			ratio2 = (knots[i + k] - i) / (knots[i + k] - knots[i + 1]);
+
+		return	(ratio1 * spline(knots, i, k - 1)) + 
+				(ratio2 * spline(knots, i + 1, k - 1));
+	}
+
+
+	/*
 	float	t = knot,
 		ti = knots[i],
 		ti1 = knots[i + 1],
@@ -51,11 +72,12 @@ float spline(float knot, float knots[], int numOfKnots, int i, int p)
 		}
 		return ratio1 + ratio2;
 	}
+	*/
 }
 
 void SceneShader::createFireVertexBuffer()
 {
-	const int	totalControlPoints = 100,
+	const int	totalControlPoints = 10,
 		m = totalControlPoints - 1,
 		degree = 3,
 		order = degree + 1,
@@ -91,21 +113,22 @@ void SceneShader::createFireVertexBuffer()
 	// generate the final knot points
 	for (int knot = 0; knot < totalControlPoints; knot++)
 		for (int i = 0; i < numOfKnots; i++)
-			points[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
+			points[knot] += controlPoints[i] * spline(knots, i, order);
+			//points[knot] += controlPoints[i] * spline(knots[knot], knots, numOfKnots, i, degree);
 
 	// need this otherwise last points will be 0
 	for (int i = numOfKnots - degree - 1; i < numOfKnots; i++)
-		C[i] = controlPoints[totalControlPoints - 1];
+		points[i] = controlPoints[totalControlPoints - 1];
 
 	vec3 velocity[numOfKnots];	// velocity vector for each knot point
 	for (int i = 0; i < numOfKnots; i++)
 	{
 		if (i == numOfKnots - 1)
-			velocity[i] = C[i - 1] - C[i];
-		velocity[i] = C[i] - C[i + 1];
+			velocity[i] = points[i - 1] - points[i];
+		velocity[i] = points[i] - points[i + 1];
 	}
 
-	fireGeneratedPoints = sizeof(C) / sizeof(C[0]);
+	fireGeneratedPoints = sizeof(points) / sizeof(points[0]);
 
 	fireTexture = loadTexture(fireTextureFile);
 
@@ -114,7 +137,7 @@ void SceneShader::createFireVertexBuffer()
 
 	glGenBuffers(1, &fireVertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, fireVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(C), C, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 	glEnableVertexAttribArray(0);
 
@@ -135,7 +158,7 @@ void SceneShader::createFireVertexBuffer()
 
 	bool redo = false;
 	for (int i = 0; i < numOfKnots; i++)
-		if (isnan(C[i].x) || isnan(C[i].y) || isnan(C[i].z))
+		if (isnan(points[i].x) || isnan(points[i].y) || isnan(points[i].z))
 		{
 			redo = true;
 			std::cout << "nan" << std::endl;
